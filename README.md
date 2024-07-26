@@ -1,18 +1,22 @@
+Certainly! Here’s a streamlined and consistent version of your project documentation without removing any information:
+
+---
+
 # Project Documentation
 
 ## Overview
 
-This project is a Django-based web application with integrated vector search capabilities. It utilizes the Llama Index and IRIS database technologies for document management and querying. The application includes both backend and frontend components, which are orchestrated using Docker.
+This project is a Django-based web application with vector search capabilities. It integrates Llama Index and IRIS database technologies for document management and querying. The application features both backend and frontend components, orchestrated using Docker.
 
 ## Table of Contents
 
 1. [Backend](#backend)
+   - [URLs Configuration](#urls-configuration)
    - [Vector Store](#vector-store)
    - [Models](#models)
    - [Views](#views)
    - [Existing Document Handling](#existing-document-handling)
 2. [Frontend](#frontend)
-   - [Setup](#setup)
    - [Components](#components)
 3. [Docker](#docker)
 4. [Setup and Configuration](#setup-and-configuration)
@@ -20,13 +24,14 @@ This project is a Django-based web application with integrated vector search cap
 6. [License](#license)
 
 ## Backend
+
 ### URLs Configuration
 
 `app/app/urls.py`
 
 ```python
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from rest_framework import routers
 from interop.views import index as interop_index
 from documents.views import index as documents_index, get_documents, delete_documents
@@ -46,31 +51,16 @@ urlpatterns = [
 
 - **Purpose**: Defines URL routing for the Django application, including API endpoints and views.
 
-
 ### Vector Store
 
-`app/documents/vectorstore.py````
+`app/documents/vectorstore.py`
 
-- **attribution**: This implementation is a slightly updated version of llama-iris here: https://github.com/caretdev/llama-iris
-
+- **Attribution**: This implementation is a slightly updated version of llama-iris found at https://github.com/caretdev/llama-iris.
 - **Purpose**: Implements an IRIS-based vector store for storing and querying vector embeddings.
 
 ### Models
 
 `app/documents/models.py`
-
-```python
-from django.db import models
-
-class Document(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title
-```
 
 - **Purpose**: Defines the model for documents stored in the database.
 
@@ -78,115 +68,153 @@ class Document(models.Model):
 
 `app/documents/views.py`
 
-```python
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Document
-from .serializers import DocumentSerializer
-
-def index(request):
-    return render(request, 'documents/index.html')
-
-@api_view(['GET'])
-def get_documents(request):
-    documents = Document.objects.all()
-    serializer = DocumentSerializer(documents, many=True)
-    return Response(serializer.data)
-
-@api_view(['DELETE'])
-def delete_documents(request):
-    ids = request.data.get('ids', [])
-    Document.objects.filter(id__in=ids).delete()
-    return Response({"status": "success"})
-```
-
 - **Purpose**: Provides view functions for rendering templates and handling API requests related to documents.
 
 ### Existing Document Handling
 
-- The existing documents handling is implemented via Django's ORM and REST API views, allowing for CRUD operations on the `Document` model.
+`app/documents/existing_document_handling.py`
+
+- **Purpose**: Provides functionality for querying existing documents from the vector store using LlamaIndex. Includes functions for loading and querying vector indices and handling query responses.
+
+#### Features
+
+- **`get_clean_name(name)`**: Sanitizes and formats a document name for use in the vector store.
+- **`query_existing_document(name, query)`**: Queries a document in the vector store and returns the response.
+
+#### Functions
+
+##### `get_clean_name(name)`
+
+**Description**: Cleans and formats a document name by converting it to lowercase and replacing whitespace with underscores.
+
+**Parameters**:
+- `name` (str): The original document name.
+
+**Returns**:
+- (str): The sanitized document name.
+
+**Example**:
+```python
+clean_name = get_clean_name("My Document Name")
+# Output: "my_document_name"
+```
+
+##### `query_existing_document(name, query)`
+
+**Description**: Queries a document in the vector store and returns the response. Connects to the vector store, loads the document's index, and processes the query.
+
+**Parameters**:
+- `name` (str): The name of the document to query.
+- `query` (str): The query text to be executed against the document.
+
+**Returns**:
+- `response` (ResponseType): The response object containing the result of the query.
+
+**Raises**:
+- `ValueError`: If the connection string is not set or if loading the index fails.
+
+**Example**:
+```python
+response = query_existing_document("my_document_name", "What is the content?")
+print(response.response)
+# Output: (response from the vector store)
+```
 
 ## Frontend
 
-### Setup
-
-Ensure you have Node.js and npm installed. Then, install the necessary dependencies:
-
-```bash
-cd frontend
-npm install
-```
-
 ### Components
 
-- The frontend utilizes a modern JavaScript framework (such as React or Vue.js). Ensure your build process is set up according to the framework's documentation.
+- The frontend utilizes a modern JavaScript framework (e.g., React or Vue.js). Ensure your build process is configured according to the framework's documentation.
+
+#### Features
+
+- **Model Selection**: Choose from different AI models.
+- **Temperature Setting**: Adjust the temperature parameter for the model.
+- **Query Input**: Enter a query to retrieve information from documents.
+- **Document Management**: Add, view, and delete documents.
+- **Response Display**: View responses and citations from the queries.
+- **Existing Documents**: Display and select from a list of existing documents.
+
+### Template
+
+#### Main Sections
+
+1. **Header**: Displays the main title: "Query and Manage Documents".
+2. **Model Name Dropdown**: Allows selection of the AI model for querying.
+3. **Temperature Input**: Numeric input to set the temperature parameter (range 0-2).
+4. **Query Input**: Text input field for entering the query.
+5. **Document Name Input**: Text input field for entering the document name.
+6. **Document Textarea**: Textarea for entering the document content.
+7. **Existing Documents Multiselect**: Multi-select dropdown for existing documents.
+8. **Submit Button**: Submits the query and document information.
+9. **Clear All Button**: Clears all input fields and selections.
+10. **Delete Button**: Deletes selected documents from the backend.
+11. **Response Section**: Displays responses and citations.
+12. **Existing Document Names Section**: Lists all existing document names.
+
+### Script
+
+#### Data
+
+- **query**: Stores the query text.
+- **document**: Stores the document content.
+- **document_name**: Stores the document name.
+- **model_name**: Stores the selected model name (default: `gpt-4o-mini`).
+- **temperature**: Stores the temperature parameter (default: `0.5`).
+- **responses**: Stores responses from the backend.
+- **existing_document_names**: Stores names of existing documents.
+- **selectedDocuments**: Stores names of selected documents for deletion.
+
+#### Methods
+
+- **submitQuery()**: Sends a POST request to submit the query and document data. Updates `responses` and `existing_document_names`.
+- **fetchExistingDocumentNames()**: Sends a GET request to fetch existing document names.
+- **deleteDocuments()**: Sends a DELETE request to remove selected documents.
+- **parseCitations(citations)**: Parses and formats citations from the response.
+- **clearQuery()**: Clears the query input field.
+- **clearDocumentName()**: Clears the document name input field.
+- **clearDocument()**: Clears the document content textarea.
+- **clearAll()**: Clears all input fields and selections.
+
+#### Lifecycle Hooks
+
+- **created()**: Fetches existing document names when the component is created.
+
+### Styles
+
+- **Disabled Button Style**: Custom style for disabled buttons.
+
+```css
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+```
 
 ## Docker
 
-### Dockerfile
-
-`Dockerfile`
-
-```dockerfile
-# Use the official Python image from the Docker Hub
-FROM python:3.9-slim
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the requirements file into the container
-COPY requirements.txt /app/
-
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code
-COPY . /app/
-
-# Expose the port the app runs on
-EXPOSE 8000
-
-# Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi:application"]
-```
-
-## Setup and Configuration
+### Setup and Configuration
 
 1. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/mindfulcoder49/iris-django-template.git
-   cd your-repo
+   cd iris-django-template
    ```
 
-2. **Set Up the Backend:**
+2. **Create .env file:**
 
-   ```bash
-   cd app
-   pip install -r requirements.txt
-   ```
+    - Put it in the root directory with your Docker file
+    - Add your OPENAI_API_KEY and IRIS_CONNECTION_STRING
+    ```bash
+    OPENAI_API_KEY=sk-dkjhf...
+    IRIS_CONNECTION_STRING=iris://SuperUser:SYS@localhost:1972/IRISAPP
+    ```
+3. **Run docker-compose build**
 
-3. **Set Up the Frontend:**
+    - The Docker file and entrypoint.sh script will handle the rest of the installation and migration
 
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-4. **Run Docker Compose:**
-
-   ```bash
-   docker-compose up --build
-   ```
-
-5. **Migrate the Database:**
-
-   ```bash
-   docker-compose exec web python manage.py migrate
-   ```
-
-## Usage
+### Usage
 
 1. **Access the Application:**
 
@@ -199,4 +227,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Feel free to adjust any details or add more specific instructions based on the exact requirements and setup of your project!
+Feel free to adjust any details or add specific instructions based on your project's requirements!
