@@ -66,6 +66,66 @@ urlpatterns = [
 
 - **Purpose**: Provides view functions for rendering templates and handling API requests related to documents.
 
+This Django module provides several functionalities for managing and querying documents using a vector store and an AI model. It offers endpoints for indexing new documents, querying existing documents, retrieving a list of document names, and deleting documents from the database and vector store. The code integrates with OpenAI and utilizes LlamaIndex for handling vector storage and querying.
+
+### Features
+
+1. **Index Document**: Accepts a request with document text and metadata, creates a vector index for the document, and stores it in the database and vector store.
+2. **Query Document**: Queries the indexed documents using a specified query and model, returning responses and citations.
+3. **Get Document Names**: Returns a list of existing document names stored in the database.
+4. **Delete Documents**: Deletes specified documents from both the database and the vector store.
+
+### Endpoints
+
+#### `index(request)`
+
+**Description**: Handles document indexing and querying. It:
+- Parses JSON data from the request.
+- Indexes new documents if provided.
+- Queries existing documents and returns responses and citations.
+- Returns the list of existing document names.
+
+**Request Payload**:
+- `query_text`: The query to be executed on existing documents.
+- `model_name`: The model to be used for querying (default: `gpt-4o-mini`).
+- `temperature`: The temperature setting for the model (default: `0.5`).
+- `selected_documents`: List of document names to query.
+- `document_text`: The text content of the new document.
+- `document_name`: The name of the new document.
+
+**Response**:
+- `responses`: A dictionary with document names as keys and their responses and citations as values.
+- `existing_document_names`: List of names of all documents stored in the database.
+
+#### `get_documents(request)`
+
+**Description**: Retrieves and returns the names of all documents currently stored in the database.
+
+**Response**:
+- `existing_document_names`: List of names of all documents stored in the database.
+
+#### `delete_documents(request)`
+
+**Description**: Deletes specified documents from both the database and the vector store.
+
+**Request Payload**:
+- `document_names`: List of document names to be deleted.
+
+**Response**:
+- `status`: Success message if documents are deleted successfully.
+- `error`: Error message if the operation fails.
+
+### Dependencies
+
+- `Django`: Web framework.
+- `logging`: For logging errors and debugging information.
+- `dotenv`: For loading environment variables.
+- `json`: For parsing JSON data.
+- `openai`: For integrating with OpenAI's language models.
+- `llama_index`: For vector storage and querying.
+- `os`: For accessing environment variables and file operations.
+
+
 ### Existing Document Handling
 
 `app/documents/existing_document_handling.py`
