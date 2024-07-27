@@ -250,7 +250,7 @@ print(response.response)
 
 ### Components
 
-- The frontend utilizes a modern JavaScript framework (e.g., React or Vue.js). Ensure your build process is configured according to the framework's documentation.
+- The frontend utilizes a modern JavaScript framework, Vue.js, with Tailwind CSS for styling.
 
 #### Features
 
@@ -268,13 +268,13 @@ print(response.response)
 1. **Header**: Displays the main title: "Query and Manage Documents".
 2. **Model Name Dropdown**: Allows selection of the AI model for querying.
 3. **Temperature Input**: Numeric input to set the temperature parameter (range 0-2).
-4. **Query Input**: Text input field for entering the query.
-5. **Document Name Input**: Text input field for entering the document name.
-6. **Document Textarea**: Textarea for entering the document content.
-7. **Existing Documents Multiselect**: Multi-select dropdown for existing documents.
+4. **Query Input**: Text input field for entering the query. If left blank it will default to "Describe the document".
+5. **Document Name Input**: Text input field for entering the document name. If left blank the Document name and Document will be ignored.
+6. **Document Textarea**: Textarea for entering the document content. If left blank the Document name will be ignored.
+7. **Existing Documents Multiselect**: Multi-select dropdown for existing documents. 
 8. **Submit Button**: Submits the query and document information.
 9. **Clear All Button**: Clears all input fields and selections.
-10. **Delete Button**: Deletes selected documents from the backend.
+10. **Delete Button**: Deletes selected documents from the backend. The text and vector embeddings are both deleted.
 11. **Response Section**: Displays responses and citations.
 12. **Existing Document Names Section**: Lists all existing document names.
 
@@ -294,8 +294,8 @@ print(response.response)
 #### Methods
 
 - **submitQuery()**: Sends a POST request to submit the query and document data. Updates `responses` and `existing_document_names`.
-- **fetchExistingDocumentNames()**: Sends a GET request to fetch existing document names.
-- **deleteDocuments()**: Sends a DELETE request to remove selected documents.
+- **fetchExistingDocumentNames()**: Sends a POST request to fetch existing document names.
+- **deleteDocuments()**: Sends a POST request to remove selected documents. This deleted their vectore stores as well.
 - **parseCitations(citations)**: Parses and formats citations from the response.
 - **clearQuery()**: Clears the query input field.
 - **clearDocumentName()**: Clears the document name input field.
@@ -308,14 +308,7 @@ print(response.response)
 
 ### Styles
 
-- **Disabled Button Style**: Custom style for disabled buttons.
-
-```css
-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-```
+- **Tailwind CSS** is used for styling the vue components
 
 ## License
 
