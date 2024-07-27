@@ -1,15 +1,15 @@
 # IRIS RAG
 
-## Introduction
+ Introduction
 - [What is Retrieval-Augmented Generation (RAG)?](#what-is-retrieval-augmented-generation-rag)
 - [Basic Summation of RAG](#basic-summation-of-rag)
 - [Key Features](#key-features)
 
-## InterSystems IRIS Integration
+ InterSystems IRIS Integration
 - [Overview](#intersystems-iris-integration)
 - [Key Architecture Features](#key-architecture-features)
 
-## IRIS RAG Interface Overview
+ IRIS RAG Interface Overview
 - [Document Querying](#document-querying)
 - [Document Management](#document-management)
 - [Configuration Options](#configuration-options)
@@ -30,18 +30,18 @@
   - [Existing Document Names Section](#existing-document-names-section)
 - [Developer Tips](#developer-tips)
 
-## Embedding Options
+ Embedding Options
 - [Local Embeddings: AGA-Large](#local-embeddings-aga-large)
 - [API-Based Embeddings: OpenAI](#api-based-embeddings-openai)
 
-## Attribution
+ Attribution
 - [Attribution Details](#attribution)
 
-## Quickstart
+ Quickstart
 - [Setup and Configuration](#setup-and-configuration)
 - [Usage](#usage)
 
-## Backend
+ Backend
 - [URLs Configuration](#urls-configuration)
 - [Vector Store](#vector-store)
 - [Models](#models)
@@ -58,7 +58,7 @@
     - [`get_clean_name(name)`](#get_clean_name-name)
     - [`query_existing_document(name, query)`](#query_existing_document-name-query)
 
-## Frontend
+ Frontend
 - [Components](#components)
   - [Features](#features-2)
 - [Template](#template)
@@ -69,9 +69,9 @@
   - [Lifecycle Hooks](#lifecycle-hooks)
 - [Styles](#styles)
 
-## License
+ License
 - [License](#license)
-
+ 
 
 ### What is Retrieval-Augmented Generation (RAG)?
 
