@@ -55,13 +55,13 @@
 - [Existing Document Handling](#existing-document-handling)
   - [Features](#features-1)
   - [Functions](#functions)
-    - [`get_clean_name(name)`](#get_clean_name-name)
-    - [`query_existing_document(name, query)`](#query_existing_document-name-query)
+    - [`get_clean_name(name)`](#get_clean_namename)
+    - [`query_existing_document(name, query)`](#query_existing_documentname-query)
 
  Frontend
 - [Components](#components)
   - [Features](#features-2)
-- [Template](#template)
+- [Interface](#interface)
   - [Main Sections](#main-sections)
 - [Script](#script)
   - [Data](#data)
@@ -414,7 +414,7 @@ print(response.response)
 - **Top_k_similarity Setting**: Adjust the top_k_similarity parameter for the model.
 - **Similarity Threshold Setting**: Adjust the similarity threshold parameter for the model.
 
-### Template
+### Interface
 
 #### Main Sections
 
