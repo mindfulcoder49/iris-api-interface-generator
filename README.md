@@ -125,20 +125,34 @@ The application interface provides several key functionalities:
 
 Here’s how you can navigate and utilize the key components of the interface:
 
-- **Model Selection Dropdown**: Choose the AI model for processing your queries. This dropdown allows you to select from available models to tailor the query results to your needs.
-- **Embed Type Dropdown**: Select the embedding type (e.g., OpenAI or BGA-Large) to influence how documents are represented in vector space.
-- **Temperature Input**: Set the temperature parameter (range 0-2) to control the randomness of the AI's responses. Lower values make the output more deterministic.
-- **Top_k_similarity Input**: Define the number of top similar documents to consider in the query results. Adjust this value to determine how many results are sent to the LLM to answer the query.
-- **Similarity Threshold Input**: Set the threshold for document similarity to filter out less relevant results. This helps in retrieving documents closely matching the query.
-- **Query Input**: Enter the text of your query to search through documents. If left blank, a default query will be used: "Describe this document".
-- **Document Name Input**: Provide a name for the new document you wish to add. If omitted, the document text will be ignored.
-- **Document Textarea**: Input the content of the new document here. This field is crucial for adding new documents to the system.
-- **Existing Documents Multiselect**: Select from a list of existing documents for querying or managing. This multi-select input lets you query multiple documents at once.
-- **Submit Button**: Use this button to execute queries or add new documents. The results or updates will be displayed accordingly.
-- **Clear All Button**: Reset all input fields and selections to their default states, clearing the form for a new entry.
-- **Delete Button**: Remove selected documents from the backend, including their vector embeddings. This action is irreversible, so proceed with caution.
-- **Response Section**: View the results of your queries, including document content and citations, displayed here.
-- **Existing Document Names Section**: Displays a list of all currently available document names for quick reference and selection.
+#### Model Selection Dropdown   
+Choose the AI model for processing your queries. This dropdown allows you to select from available models to tailor the query results to your needs.
+#### Embed Type Dropdown   
+Select the embedding type (e.g., OpenAI or BGA-Large) to influence how documents are represented in vector space.
+#### Temperature Input   
+Set the temperature parameter (range 0-2) to control the randomness of the AI's responses. Lower values make the output more deterministic.
+#### Top_k_similarity Input   
+Define the number of top similar documents to consider in the query results. Adjust this value to determine how many results are sent to the LLM to answer the query.
+#### Similarity Threshold Input   
+Set the threshold for document similarity to filter out less relevant results. This helps in retrieving documents closely matching the query.
+#### Query Input   
+Enter the text of your query to search through documents. If left blank, a default query will be used: "Describe this document".
+#### Document Name Input   
+Provide a name for the new document you wish to add. If omitted, the document text will be ignored.
+#### Document Textarea   
+Input the content of the new document here. This field is crucial for adding new documents to the system.
+#### Existing Documents Multiselect   
+Select from a list of existing documents for querying or managing. This multi-select input lets you query multiple documents at once.
+#### Submit Button   
+Use this button to execute queries or add new documents. The results or updates will be displayed accordingly.
+#### Clear All Button   
+Reset all input fields and selections to their default states, clearing the form for a new entry.
+#### Delete Button   
+Remove selected documents from the backend, including their vector embeddings. This action is irreversible, so proceed with caution.
+#### Response Section   
+View the results of your queries, including document content and citations, displayed here.
+#### Existing Document Names Section   
+Displays a list of all currently available document names for quick reference and selection.
 
 ### Developer Tips
 
