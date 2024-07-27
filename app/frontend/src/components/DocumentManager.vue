@@ -27,7 +27,10 @@
         class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
       >
         <option value="openai">OpenAI</option>
-        <option value="bga-large">BGA-Large (Free)</option>
+        <option value="bga-small">BGA-Small (Fastest)</option>
+        <option value="bga-base">BGA-Base (Medium)</option>
+        <option value="bga-large">BGA-Large (Slow)</option>
+
       </select>
     </div>
 
@@ -136,8 +139,8 @@
         multiple
         class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
       >
-        <option v-for="(name, index) in existing_document_names" :key="index" :value="name">
-          {{ name }}
+        <option v-for="(doc, index) in existing_documents" :key="index" :value="doc.name">
+          {{ doc.name }} - {{ doc.embed_type }} - {{ doc.embed_dim }}
         </option>
       </select>
     </div>
@@ -202,15 +205,23 @@ export default {
       model_name: 'gpt-4o-mini', // Default model name
       embed_type: 'openai', // Default embed_type
       temperature: .5, // Default temperature
-      top_k_similarity: 10, // Default top_k_similarity
-      similarity_threshold: .7, // Default similarity_threshold
+      top_k_similarity: 3, // Default top_k_similarity
+      similarity_threshold: .4, // Default similarity_threshold
       responses: {},  // Should be an object to store document names as keys
       existing_document_names: [], 
+      existing_documents: [],
       selectedDocuments: [],
     };
   },
   methods: {
     async submitQuery() {
+      // Check for duplicate document names or content
+      if (this.checkDocumentDuplicates()) {
+        //ask for confirmation
+        if (!confirm('A document with the same name or content already exists. Are you sure you want to proceed?')) {
+          return;
+        }
+      }
       // Change the button text for element with id submitQuery to "Loading..."
       document.getElementById('submitQuery').innerText = 'Loading...';
       //disable it
@@ -241,6 +252,7 @@ export default {
         document.getElementById('submitQuery').disabled = false;
         this.responses = data.responses;
         this.existing_document_names = data.existing_document_names;
+        this.existing_documents = data.existing_documents;
       } catch (error) {
         // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
         document.getElementById('submitQuery').innerText = 'Query';
@@ -262,6 +274,7 @@ export default {
         });
         const data = await response.json();
         this.existing_document_names = data.existing_document_names;
+        this.existing_documents = data.existing_documents;
       } catch (error) {
         console.error('Error fetching existing document names:', error);
       }
@@ -320,6 +333,11 @@ export default {
       } else {
         return response;
       }
+    },
+
+    //check the existing_documents for an element with a name or content that matches the document_name or document
+    checkDocumentDuplicates() {
+      return this.existing_documents.some(doc => doc.name === this.document_name || doc.content === this.document);
     },
 
     clearQuery() {

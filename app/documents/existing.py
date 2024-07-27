@@ -33,12 +33,10 @@ def query_existing_document(name, query, top_k_similarity, similarity_threshold)
     if not CONNECTION_STRING:
         logger.error("Connection string is not set. Please check your environment variables.")
         raise ValueError("Connection string is not set.")
-    
-    #table_name is name in lowercase with data_ prefix
-    table_name = f"data_{name.lower()}"
 
     #get embed_dim from the document
     embed_dim = 0
+    embed_type = ""
     try:
         all_documents = Document.objects.all()
         for doc in all_documents:
@@ -49,16 +47,19 @@ def query_existing_document(name, query, top_k_similarity, similarity_threshold)
                     LlamaSettings.embed_model = OpenAIEmbedding(model="text-embedding-3-small", embed_batch_size=100)
                 elif embed_type == "bga-large":
                     LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
-                break
+                elif embed_type == "bga-base":
+                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+                elif embed_type == "bga-small":
+                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     except Exception as e:
         logger.error(f"Failed to get document: {e}")
         raise ValueError("Failed to get document.") from e
 
-    logger.debug(f"Connecting to vector store with name: {name}, table_name: {table_name}")
+    logger.debug(f"Connecting to vector store with name: {name}")
     
     vector_store = IRISVectorStore.from_params(
         connection_string=CONNECTION_STRING,
-        table_name=name,
+        table_name=get_clean_name(name),
         embed_dim=embed_dim,
     )
     

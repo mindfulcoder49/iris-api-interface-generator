@@ -85,10 +85,17 @@ def index(request):
         elif embed_type == "bga-large":
             embed_dim = 1024
             LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
+        elif embed_type == "bga-base":
+            embed_dim = 768
+            LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+        elif embed_type == "bga-small":
+            embed_dim = 384
+            LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
         document_text = json_data["document_text"]
         document_name = json_data["document_name"]
         #substitute all kinds of whitespace with underscore using regular expressions
+        original_name = document_name
         document_name = get_clean_name(document_name)
 
         
@@ -117,7 +124,7 @@ def index(request):
 
             logger.debug(f"Index created and stored successfully for document: {document_name}")
 
-            newdoc = Document(name=document_name, content=document_text, table_name=f"data_{document_name}", embed_dim=embed_dim, embed_type=embed_type)
+            newdoc = Document(name=original_name, content=document_text, table_name=f"data_{document_name}", embed_dim=embed_dim, embed_type=embed_type)
             newdoc.save()
 
             retriever = VectorIndexRetriever(
@@ -148,18 +155,41 @@ def index(request):
     # Fetch existing document names
     existing_document_names = [doc.name for doc in Document.objects.all()]
 
+    # Fetch Existing Documents
+    existing_documents = []
+    for doc in Document.objects.all():
+        existing_documents.append({
+            "name": doc.name,
+            "content": doc.content,
+            "table_name": doc.table_name,
+            "embed_dim": doc.embed_dim,
+            "embed_type": doc.embed_type
+        })
+
+
     return JsonResponse({
         "responses": responses,
-        "existing_document_names": existing_document_names
+        "existing_document_names": existing_document_names,
+        "existing_documents": existing_documents
     }, status=200)
     
 
 
     
 def get_documents(request):
-    #get all existing document names from the database
+    #get all existing documents
     existing_document_names = [doc.name for doc in Document.objects.all()]
-    return JsonResponse({"existing_document_names": existing_document_names}, status=200)
+    existing_documents = []
+    for doc in Document.objects.all():
+        existing_documents.append({
+            "name": doc.name,
+            "content": doc.content,
+            "table_name": doc.table_name,
+            "embed_dim": doc.embed_dim,
+            "embed_type": doc.embed_type
+        })
+
+    return JsonResponse({"existing_document_names": existing_document_names, "existing_documents": existing_documents}, status=200)
 
 def delete_documents(request):
     dotenv.load_dotenv()
@@ -177,7 +207,7 @@ def delete_documents(request):
 
         # Drop tables and delete local documents
         for name in document_names:
-            name = get_clean_name(name)
+            clean_name = get_clean_name(name)
             table_name = f"data_{name.lower()}"
 
             # Drop the corresponding table
@@ -185,7 +215,7 @@ def delete_documents(request):
             try:
                 vector_store = IRISVectorStore.from_params(
                     connection_string=CONNECTION_STRING,
-                    table_name=name,
+                    table_name=clean_name,
                     embed_dim=1536,
                     perform_setup=False
                 )
@@ -194,7 +224,7 @@ def delete_documents(request):
                 return JsonResponse({"error": f"Failed to drop table {table_name}: {str(sql_error)}"}, status=500)
 
             # Debugging: Log the type and value of the name variable
-            logging.debug(f"Type of name: {type(name)}, Value of name: {name}")
+            logging.debug(f"Type of name: {type(clean_name)}, Value of name: {clean_name}")
 
             # Ensure name is a string
             if isinstance(name, str):

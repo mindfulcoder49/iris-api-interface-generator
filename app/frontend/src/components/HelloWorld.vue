@@ -169,7 +169,12 @@
       </p>
       <ul class="list-disc pl-5 mb-4">
         <li class="mb-2">
-          <span class="font-semibold text-blue-600">Dimension</span>: 1024
+          <span class="font-semibold text-blue-600">Dimension</span>: 
+            <ul>
+              <li>BGA-Large - 1024</li>
+              <li>BGA-Base - 768</li>
+              <li>BGA-Small - 384</li>
+            </ul>
         </li>
         <li class="mb-2">
           <span class="font-semibold text-blue-600">Cost</span>: Free to use

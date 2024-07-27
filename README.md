@@ -27,7 +27,7 @@
   - [Clear All Button](#clear-all-button)
   - [Delete Button](#delete-button)
   - [Response Section](#response-section)
-  - [Existing Document Names Section](#existing-document-names-section)
+  - [Existing Documents Section](#existing-documents-section)
 - [Developer Tips](#developer-tips)
 
  Embedding Options
@@ -151,8 +151,8 @@ Reset all input fields and selections to their default states, clearing the form
 Remove selected documents from the backend, including their vector embeddings. This action is irreversible, so proceed with caution.
 #### Response Section   
 View the results of your queries, including document content and citations, displayed here.
-#### Existing Document Names Section   
-Displays a list of all currently available document names for quick reference and selection.
+#### Existing Documents Section   
+Displays a list of all currently available documents for quick reference and selection.
 
 ### Developer Tips
 
@@ -283,13 +283,13 @@ urlpatterns = [
 
 - **Purpose**: Provides view functions for rendering templates and handling API requests related to documents.
 
-This Django module provides several functionalities for managing and querying documents using a vector store and an AI model. It offers endpoints for indexing new documents, querying existing documents, retrieving a list of document names, and deleting documents from the database and vector store. The code integrates with OpenAI and utilizes LlamaIndex for handling vector storage and querying.
+This Django module provides several functionalities for managing and querying documents using a vector store and an AI model. It offers endpoints for indexing new documents, querying existing documents, retrieving a list of documents, and deleting documents from the database and vector store. The code integrates with OpenAI and utilizes LlamaIndex for handling vector storage and querying.
 
 ### Features
 
 1. **Index Document**: Accepts a request with document text and metadata, creates a vector index for the document, and stores it in the database and vector store.
 2. **Query Document**: Queries the indexed documents using a specified query and model, returning responses and citations.
-3. **Get Document Names**: Returns a list of existing document names stored in the database.
+3. **Get Documents**: Returns a list of existing documents stored in the database.
 4. **Delete Documents**: Deletes specified documents from both the database and the vector store.
 
 ### Endpoints
@@ -300,7 +300,7 @@ This Django module provides several functionalities for managing and querying do
 - Parses JSON data from the request.
 - Indexes new documents if provided.
 - Queries existing documents and returns responses and citations.
-- Returns the list of existing document names.
+- Returns the list of existing documents.
 
 **Request Payload**:
 - `query_text`: The query to be executed on existing documents.
@@ -315,7 +315,7 @@ This Django module provides several functionalities for managing and querying do
 
 **Response**:
 - `responses`: A dictionary with document names as keys and their responses and citations as values.
-- `existing_document_names`: List of names of all documents stored in the database.
+- `existing_documents`: List of all documents stored in the database.
 
 #### `get_documents(request)`
 
@@ -432,7 +432,7 @@ print(response.response)
 12. **Clear All Button**: Clears all input fields and selections.
 13. **Delete Button**: Deletes selected documents from the backend. The text and vector embeddings are both deleted.
 14. **Response Section**: Displays responses and citations.
-15. **Existing Document Names Section**: Lists all existing document names.
+15. **Existing Document Section**: Lists all existing documents.
 
 ### Script
 
@@ -447,13 +447,13 @@ print(response.response)
 - **top_k_similarity**: Stores the number of top similar documents to consider.
 - **similarity_threshold**: Stores the threshold for document similarity.
 - **responses**: Stores responses from the backend.
-- **existing_document_names**: Stores names of existing documents.
+- **existing_documents**: Stores existing documents.
 - **selectedDocuments**: Stores names of selected documents for deletion.
 
 #### Methods
 
 - **submitQuery()**: Sends a POST request to submit the query and document data. Updates `responses` and `existing_document_names`.
-- **fetchExistingDocumentNames()**: Sends a POST request to fetch existing document names.
+- **fetchExistingDocumentNames()**: Sends a POST request to fetch existing documents.
 - **deleteDocuments()**: Sends a POST request to remove selected documents. This deleted their vectore stores as well.
 - **parseCitations(citations)**: Parses and formats citations from the response.
 - **clearQuery()**: Clears the query input field.
