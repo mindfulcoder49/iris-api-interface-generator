@@ -2,22 +2,92 @@
 
 ## Overview
 
-This project is a Django-based web application with vector search capabilities. It integrates Llama Index and IRIS database technologies for document management and querying. The application features both backend and frontend components, orchestrated using Docker.
+This project is a Django-based web application with vector search capabilities. It integrates LlamaIndex and IRIS database technologies for document management and querying. The application features both backend and frontend components, orchestrated using Docker.
 
-## Table of Contents
+## Attribution
 
-1. [Backend](#backend)
-   - [URLs Configuration](#urls-configuration)
-   - [Vector Store](#vector-store)
-   - [Models](#models)
-   - [Views](#views)
-   - [Existing Document Handling](#existing-document-handling)
-2. [Frontend](#frontend)
-   - [Components](#components)
-3. [Docker](#docker)
-4. [Setup and Configuration](#setup-and-configuration)
-5. [Usage](#usage)
-6. [License](#license)
+The vectorstore.py file in this project that implements the IrisVectorStore object with sqlalchemy was written mostly by "Dmitry Maslennikov <dmitry@caretdev.com>" in the llama-iris package here: https://github.com/caretdev/llama-iris/ which is why llama-iris is included in the requirements.txt but not used in the package. It's dependencies are required and better defined in the llama-iris package which I hope to integrate into this project in the future after small updates are applied. For the sake of speed in creating this project for the InterSystems 2024 Python Contest, I brought the code in directly to have full control over the vector storage functionality.
+
+# Table of Contents
+
+- [Project Documentation](#project-documentation)
+  - [Overview](#overview)
+  - [Attribution](#attribution)
+  - [Quickstart](#quickstart)
+    - [Setup and Configuration](#setup-and-configuration)
+    - [Usage](#usage)
+  - [Backend](#backend)
+    - [URLs Configuration](#urls-configuration)
+    - [Vector Store](#vector-store)
+    - [Models](#models)
+    - [Views](#views)
+    - [Features](#features)
+    - [Endpoints](#endpoints)
+      - [`index(request)`](#indexrequest)
+      - [`get_documents(request)`](#get_documentsrequest)
+      - [`delete_documents(request)`](#delete_documentsrequest)
+    - [Dependencies](#dependencies)
+    - [Existing Document Handling](#existing-document-handling)
+      - [`get_clean_name(name)`](#get_clean_namename)
+      - [`query_existing_document(name, query)`](#query_existing_documentname-query)
+  - [Frontend](#frontend)
+    - [Components](#components)
+    - [Template](#template)
+      - [Main Sections](#main-sections)
+    - [Script](#script)
+      - [Data](#data)
+      - [Methods](#methods)
+      - [Lifecycle Hooks](#lifecycle-hooks)
+    - [Styles](#styles)
+  - [License](#license)
+
+
+## Quickstart
+
+### Setup and Configuration
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/mindfulcoder49/iris-django-template.git
+   cd iris-django-template
+   ```
+
+2. **Create .env file:**
+
+    - Put it in the root directory with your Docker file
+    - Add your OPENAI_API_KEY and IRIS_CONNECTION_STRING
+    ```bash
+    OPENAI_API_KEY=sk-dkjhf...
+    IRIS_CONNECTION_STRING=iris://SuperUser:SYS@localhost:1972/IRISAPP
+    ```
+3. **Run `docker-compose build`**
+
+    - The Docker file and entrypoint.sh script will handle the rest of the installation and migration
+
+4. **Change the permissions on the repository folder and its contents**
+
+    - In order for the docker container internal users to be able to write to the repository directory the permissions need to allow for that.
+    - The easiest way to do that is just set full permissions. 
+    - On Linux you can run 
+    ```bash
+    chmod -R 777 .
+    ```
+    or
+    ```bash
+    chmod -R 777 ../iris_django_template
+    ```
+
+5. **Run `docker-compose up`**
+
+
+### Usage
+
+1. **Access the Application:**
+
+   - Frontend: `http://localhost:53795/django/documents/`
+   - Backend: `http://localhost:53795/csp/irisapp/EnsPortal.ProductionConfig.zen` login: SuperUser/SYS
+
 
 ## Backend
 
@@ -247,40 +317,7 @@ button:disabled {
 }
 ```
 
-## Docker
-
-### Setup and Configuration
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/mindfulcoder49/iris-django-template.git
-   cd iris-django-template
-   ```
-
-2. **Create .env file:**
-
-    - Put it in the root directory with your Docker file
-    - Add your OPENAI_API_KEY and IRIS_CONNECTION_STRING
-    ```bash
-    OPENAI_API_KEY=sk-dkjhf...
-    IRIS_CONNECTION_STRING=iris://SuperUser:SYS@localhost:1972/IRISAPP
-    ```
-3. **Run docker-compose build**
-
-    - The Docker file and entrypoint.sh script will handle the rest of the installation and migration
-
-### Usage
-
-1. **Access the Application:**
-
-   - Backend: `http://localhost:53795/csp/irisapp/EnsPortal.ProductionConfig.zen`
-   - Frontend: `http://localhost:53795/django/documents/`
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
----
-
-Feel free to adjust any details or add specific instructions based on your project's requirements!

@@ -11,8 +11,7 @@ iris-pex-embedded-python>=2.0.0
 
 #for RAG
 llama-index
-sqlalchemy
-#llama-iris
+llama-iris
 
 
 #for connection to the database
