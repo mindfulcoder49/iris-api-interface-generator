@@ -23,6 +23,9 @@ from llama_index.core import Settings as LlamaSettings
 from .models import Document 
 from .existing import query_existing_document, get_clean_name
 
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.openai import OpenAIEmbedding
+
 
 
 def index(request):
@@ -36,8 +39,26 @@ def index(request):
     
 
     query = json_data.get("query_text", "Describe the document")
+    if query == "":
+        query = "Describe the document"
+        
     model_name = json_data.get("model_name", "gpt-4o-mini")
     temperature = json_data.get("temperature", 0.5)  # Default temperature is 0.5
+    top_k_similarity = json_data.get("top_k_similarity", 10)
+    similarity_threshold = json_data.get("similarity_threshold", 0.7)
+    embed_type = json_data.get("embed_type", "openai")
+    embed_dim = 0
+
+
+
+    logger.debug(f"Querying with model: {model_name}") 
+    logger.debug(f"temperature: {temperature}")
+    logger.debug(f"top_k_similarity: {top_k_similarity}") 
+    logger.debug(f"similarity_threshold: {similarity_threshold}")
+    logger.debug(f"embed_type: {embed_type}")
+    logger.debug(f"embed_dim: {embed_dim}")
+    logger.debug(f"query: {query}")
+
     responses = {}
 
     llm = OpenAI(model=model_name, temperature=temperature)
@@ -46,7 +67,7 @@ def index(request):
     selected_documents = json_data.get("selected_documents", [])
     for doc in selected_documents:
         try:
-            response = query_existing_document(doc, query)
+            response = query_existing_document(doc, query, top_k_similarity, similarity_threshold)
             responses[doc] = {
                 "response": response.response,
                 "citations": response.get_formatted_sources(1000)
@@ -57,13 +78,20 @@ def index(request):
 
 
     if json_data["document_text"] != "" and json_data["document_name"] != "":
+
+        if embed_type == "openai":
+            embed_dim = 1536
+            LlamaSettings.embed_model = OpenAIEmbedding(model="text-embedding-3-small", embed_batch_size=100)
+        elif embed_type == "bga-large":
+            embed_dim = 1024
+            LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
+
         document_text = json_data["document_text"]
         document_name = json_data["document_name"]
         #substitute all kinds of whitespace with underscore using regular expressions
         document_name = get_clean_name(document_name)
 
-        newdoc = Document(name=document_name, content=document_text)
-        newdoc.save()
+        
 
         documents = [LlamaDocument(text=document_text)]
 
@@ -72,7 +100,7 @@ def index(request):
         vector_store = IRISVectorStore.from_params(
             connection_string=CONNECTION_STRING,
             table_name=document_name,
-            embed_dim=1536,
+            embed_dim=embed_dim,
         )
 
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
@@ -89,9 +117,12 @@ def index(request):
 
             logger.debug(f"Index created and stored successfully for document: {document_name}")
 
+            newdoc = Document(name=document_name, content=document_text, table_name=f"data_{document_name}", embed_dim=embed_dim, embed_type=embed_type)
+            newdoc.save()
+
             retriever = VectorIndexRetriever(
                 index=index,
-                similarity_top_k=10,
+                similarity_top_k=top_k_similarity,
             )
 
             # configure response synthesizer
@@ -101,7 +132,7 @@ def index(request):
             query_engine = RetrieverQueryEngine(
                 retriever=retriever,
                 response_synthesizer=response_synthesizer,
-                node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.7)],
+                node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=similarity_threshold)],
             )
             response = query_engine.query(query)
 

@@ -18,9 +18,23 @@
       </select>
     </div>
 
+    <!-- embed_type either openai or bga-large-->
+    <div class="mb-6">
+      <label for="embed_type" class="block text-gray-700 text-sm font-bold mb-2">Embed Type</label>
+      <select
+        id="embed_type"
+        v-model="embed_type"
+        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+      >
+        <option value="openai">OpenAI</option>
+        <option value="bga-large">BGA-Large (Free)</option>
+      </select>
+    </div>
+
     <!-- Temperature Input -->
     <div class="mb-6">
       <label for="temperature" class="block text-gray-700 text-sm font-bold mb-2">Temperature (0-2)</label>
+      <p class="text-sm text-gray-600">Controls the randomness of the generated text. Lower values are more deterministic, higher values are more random.</p>
       <input
         id="temperature"
         type="number"
@@ -33,15 +47,48 @@
       />
     </div>
 
+    <!-- Top_k_similarity Input -->
+    <div class="mb-6">
+      <label for="top_k_similarity" class="block text-gray-700 text-sm font-bold mb-2">Top_k_similarity (0-20)</label>
+      <p class="text-sm text-gray-600">Number of similar documents to retrieve</p>
+      <input
+        id="top_k_similarity"
+        type="number"
+        v-model.number="top_k_similarity"
+        min="0"
+        max="20"
+        step="1"
+        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+        placeholder="Enter top_k_similarity"
+      />
+    </div>
+
+    <!-- Similarity Threshold Input -->
+    <div class="mb-6">
+      <label for="similarity_threshold" class="block text-gray-700 text-sm font-bold mb-2">Similarity Threshold (0-1)</label>
+      <p class="text-sm text-gray-600">Minimum similarity score for a document to be considered relevant</p>
+      <input
+        id="similarity_threshold"
+        type="number"
+        v-model.number="similarity_threshold"
+        min="0"
+        max="1"
+        step="0.1"
+        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+        placeholder="Enter similarity threshold"
+      />
+    </div>
+
     <!-- Query Input -->
     <div class="mb-6 relative">
       <label for="query" class="block text-gray-700 text-sm font-bold mb-2">Query</label>
-      <input
+      <textarea
         id="query"
         v-model="query"
         placeholder="Enter your query"
         class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-      />
+        rows="6"
+      ></textarea>
       <button @click="clearQuery" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900">
         &#x2715;
       </button>
@@ -50,13 +97,14 @@
     <!-- Document Name Input -->
     <div class="mb-6 relative">
       <label for="document_name" class="block text-gray-700 text-sm font-bold mb-2">Document Name</label>
+      <p class="text-sm text-gray-600">If blank then this and the document will be ignored</p>
       <input
         id="document_name"
         v-model="document_name"
         placeholder="Enter document name"
         class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
       />
-      <button @click="clearDocumentName" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900">
+      <button @click="clearDocumentName" class="absolute right-2 bottom-2 text-gray-600 hover:text-gray-900">
         &#x2715;
       </button>
     </div>
@@ -64,6 +112,7 @@
     <!-- Document Textarea -->
     <div class="mb-6 relative">
       <label for="document" class="block text-gray-700 text-sm font-bold mb-2">Document</label>
+      <p class="text-sm text-gray-600">If blank then this and the document name will be ignored</p>
       <textarea
         id="document"
         v-model="document"
@@ -79,6 +128,8 @@
     <!-- Existing Documents Multiselect -->
     <div class="mb-6">
       <label for="existing_documents" class="block text-gray-700 text-sm font-bold mb-2">Existing Documents</label>
+      <p class="text-sm text-gray-600">Select one or more documents to query against</p>
+      <p class="text-sm text-gray-600">Hold down the Ctrl (windows) / Command (Mac) button to select or unselect multiple options.</p>
       <select
         id="existing_documents"
         v-model="selectedDocuments"
@@ -91,59 +142,51 @@
       </select>
     </div>
 
+    <div class="mb-6 flex space-x-4">
     <!-- Submit Button -->
-    <div class="mb-6">
-      <button
-        @click="submitQuery"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Query
-      </button>
-    </div>
+    <button
+      @click="submitQuery"
+      id="submitQuery"
+      class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      Query/Add Document
+    </button>
 
     <!-- Clear All Button -->
-    <div class="mb-6">
-      <button
-        @click="clearAll"
-        class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Clear All
-      </button>
-    </div>
+    <button
+      @click="clearAll"
+      class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      Clear All
+    </button>
 
     <!-- Delete Button -->
-    <div class="mb-6">
-      <button
-        @click="deleteDocuments"
-        class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Delete Selected Documents
-      </button>
-    </div>
+    <button
+      @click="deleteDocuments"
+      class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      Delete Selected Documents
+    </button>
+  </div>
 
     <!-- Response Section -->
     <div v-if="responses" class="mb-6">
       <h2 class="text-2xl font-semibold mb-2 text-gray-900">Responses:</h2>
       <div v-for="(response, document_name) in responses" :key="document_name" class="mb-4">
         <h3 class="text-lg font-semibold text-gray-800">{{ document_name }}</h3>
-        <p class="text-gray-700 mb-2">{{ response.response }}</p>
+        <p class="text-gray-700 mb-2">{{ parseResponse(response.response) }}</p>
         <div v-if="response.citations" class="text-gray-600">
           <h4 class="text-md font-semibold mb-1">Citations:</h4>
           <div v-for="(citation, index) in parseCitations(response.citations)" :key="index" class="mb-2 p-2 border border-gray-200 rounded-lg">
             <p>{{ citation }}</p>
           </div>
         </div>
+        <!-- might have error in response.error-->
+        <p v-if="response.error" class="text-red-600">{{ response.error }}</p>
         <hr class="my-4 border-gray-300" />
       </div>
     </div>
 
-    <!-- Existing Document Names Section -->
-    <div v-if="existing_document_names.length" class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2 text-gray-900">Existing Document Names:</h2>
-      <ul class="list-disc pl-5 text-gray-800">
-        <li v-for="(name, index) in existing_document_names" :key="index">{{ name }}</li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -157,7 +200,10 @@ export default {
       document: '',
       document_name: '',
       model_name: 'gpt-4o-mini', // Default model name
+      embed_type: 'openai', // Default embed_type
       temperature: .5, // Default temperature
+      top_k_similarity: 10, // Default top_k_similarity
+      similarity_threshold: .7, // Default similarity_threshold
       responses: {},  // Should be an object to store document names as keys
       existing_document_names: [], 
       selectedDocuments: [],
@@ -165,6 +211,10 @@ export default {
   },
   methods: {
     async submitQuery() {
+      // Change the button text for element with id submitQuery to "Loading..."
+      document.getElementById('submitQuery').innerText = 'Loading...';
+      //disable it
+      document.getElementById('submitQuery').disabled = true;
       try {
         const response = await fetch('/django/api/documents/', {
           method: 'POST',
@@ -177,14 +227,25 @@ export default {
             document_text: this.document,
             document_name: this.document_name,
             model_name: this.model_name,
+            embed_type: this.embed_type,
             temperature: this.temperature,
+            top_k_similarity: this.top_k_similarity,
+            similarity_threshold: this.similarity_threshold,
             selected_documents: this.selectedDocuments || [],
           }),
         });
         const data = await response.json();
+            // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
+        document.getElementById('submitQuery').innerText = 'Query';
+        //enable it
+        document.getElementById('submitQuery').disabled = false;
         this.responses = data.responses;
         this.existing_document_names = data.existing_document_names;
       } catch (error) {
+        // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
+        document.getElementById('submitQuery').innerText = 'Query';
+        //enable it
+        document.getElementById('submitQuery').disabled = false;
         console.error('Error submitting query:', error);
         alert('An unexpected error occurred.');
       }
@@ -250,6 +311,15 @@ export default {
         }
       });
       return mappedCitations;
+    },
+
+    parseResponse(response) {
+      //if response == "Empty Response" append "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query."
+      if (response == "Empty Response") {
+        return "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query.";
+      } else {
+        return response;
+      }
     },
 
     clearQuery() {

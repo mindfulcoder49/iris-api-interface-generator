@@ -3,6 +3,7 @@ import dotenv
 import os
 from llama_index.core import StorageContext, load_index_from_storage, VectorStoreIndex
 from .vectorstore import IRISVectorStore
+from .models import Document
 import re
 
 from llama_index.core import VectorStoreIndex, get_response_synthesizer
@@ -10,17 +11,24 @@ from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.openai import OpenAIEmbedding
 
-logger = logging.getLogger(__name__)
+from llama_index.core import Settings as LlamaSettings
+
+
+
 
 def get_clean_name(name):
     name = name.lower()
+    #strip non-alphanumeric characters
+    name = re.sub(r"[^a-z0-9\s]", " ", name)
     document_name = re.sub(r"\s+", "_", name)
     return document_name
 
-def query_existing_document(name, query):
+def query_existing_document(name, query, top_k_similarity, similarity_threshold):
     dotenv.load_dotenv()
-    
+    logger = logging.getLogger(__name__)
     CONNECTION_STRING = os.getenv("IRIS_CONNECTION_STRING")
     if not CONNECTION_STRING:
         logger.error("Connection string is not set. Please check your environment variables.")
@@ -29,12 +37,29 @@ def query_existing_document(name, query):
     #table_name is name in lowercase with data_ prefix
     table_name = f"data_{name.lower()}"
 
+    #get embed_dim from the document
+    embed_dim = 0
+    try:
+        all_documents = Document.objects.all()
+        for doc in all_documents:
+            if doc.name == name:
+                embed_dim = doc.embed_dim
+                embed_type = doc.embed_type
+                if embed_type == "openai":
+                    LlamaSettings.embed_model = OpenAIEmbedding(model="text-embedding-3-small", embed_batch_size=100)
+                elif embed_type == "bga-large":
+                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
+                break
+    except Exception as e:
+        logger.error(f"Failed to get document: {e}")
+        raise ValueError("Failed to get document.") from e
+
     logger.debug(f"Connecting to vector store with name: {name}, table_name: {table_name}")
     
     vector_store = IRISVectorStore.from_params(
         connection_string=CONNECTION_STRING,
         table_name=name,
-        embed_dim=1536,
+        embed_dim=embed_dim,
     )
     
     
@@ -47,7 +72,7 @@ def query_existing_document(name, query):
     
     retriever = VectorIndexRetriever(
         index=index,
-        similarity_top_k=10,
+        similarity_top_k=top_k_similarity,
     )
 
     # configure response synthesizer
@@ -57,8 +82,9 @@ def query_existing_document(name, query):
     query_engine = RetrieverQueryEngine(
         retriever=retriever,
         response_synthesizer=response_synthesizer,
-        node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.7)],
+        node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=similarity_threshold)],
     )
     
     response = query_engine.query(query)
     return response
+

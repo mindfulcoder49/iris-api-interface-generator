@@ -7,4 +7,7 @@ class Document(models.Model):
     name = models.TextField()
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    table_name = models.TextField()
+    embed_dim = models.IntegerField()
+    embed_type = models.TextField()
 
