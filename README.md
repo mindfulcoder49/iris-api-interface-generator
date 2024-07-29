@@ -1,3 +1,7 @@
+# Update
+
+Local LLM suppor tin the form of phi3:mini has been added to show the possibility of a fully local environment
+
 # IRIS RAG
 
  Introduction
