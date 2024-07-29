@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-xz=i502*o3k%v$lr6jqgu96e)a!@mn(a!x5+%@1=-1tbrf*$05
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# 45.55.135.188, and myragapp.com are the allowed hosts
+ALLOWED_HOSTS = [] 
 
 
 # Application definition

@@ -16,6 +16,10 @@ llama-iris
 llama_index.embeddings.huggingface
 llama_index.llms.ollama
 
+#for ollama
+requests
+ollama
+
 #for connection to the database
 python-dotenv
 

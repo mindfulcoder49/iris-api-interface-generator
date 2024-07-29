@@ -18,6 +18,7 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 
 from llama_index.llms.openai import OpenAI
+from llama_index.llms.ollama import Ollama
 from llama_index.core import Settings as LlamaSettings
 
 from .models import Document 
@@ -26,7 +27,7 @@ from .existing import query_existing_document, get_clean_name
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 
-
+import requests
 
 def index(request):
     logger = logging.getLogger(__name__)
@@ -61,7 +62,10 @@ def index(request):
 
     responses = {}
 
-    llm = OpenAI(model=model_name, temperature=temperature)
+    if model_name == "phi3":
+        llm = Ollama(model="phi3:mini", base_url="http://ollama:11434")
+    else:
+        llm = OpenAI(model=model_name, temperature=temperature)
     LlamaSettings.llm = llm
 
     selected_documents = json_data.get("selected_documents", [])
@@ -172,8 +176,40 @@ def index(request):
         "existing_document_names": existing_document_names,
         "existing_documents": existing_documents
     }, status=200)
+
+def ollama_pull(request):
+    url = "http://ollama:11434/api/pull"  # Use Docker service name for hostname if applicable
+    try:
+        # Make the POST request to Ollama service
+        api_response = requests.post(url, json=request.body)
+        api_response.raise_for_status()  # Raise an exception for HTTP errors
+
+        # Return the response from Ollama as JSON
+        return JsonResponse(api_response.json())
+    except requests.exceptions.RequestException as e:
+        # Handle request exceptions and return an error response
+        return JsonResponse({"error": str(e)}, status=500) 
     
 
+def ollama(request):
+    prompt = request.GET.get("prompt", "who are you?") 
+
+    url = "http://ollama:11434/api/generate"  # Use Docker service name for hostname if applicable
+    payload = {
+        "model": "phi3",
+        "prompt": prompt,
+        "stream": False,
+    }
+    try:
+        # Make the POST request to Ollama service
+        api_response = requests.post(url, json=payload)
+        api_response.raise_for_status()  # Raise an exception for HTTP errors
+
+        # Return the response from Ollama as JSON
+        return JsonResponse(api_response.json())
+    except requests.exceptions.RequestException as e:
+        # Handle request exceptions and return an error response
+        return JsonResponse({"error": str(e)}, status=500)
 
     
 def get_documents(request):

@@ -5,7 +5,7 @@ from rest_framework import routers
 from interop.views import index as interop_index
 
 from documents.views import index as documents_index
-from documents.views import get_documents, delete_documents
+from documents.views import get_documents, delete_documents, ollama, ollama_pull
 
 from django.views.generic import TemplateView
 
@@ -18,5 +18,7 @@ urlpatterns = [
     path('api/documents/', documents_index),
     path('api/document_names/', get_documents),
     path('api/documentsdelete/', delete_documents),
+    path('api/ollama/', ollama),
+    path('api/ollama_pull/', ollama_pull),
     path('documents/', TemplateView.as_view(template_name='index.html')),
 ]

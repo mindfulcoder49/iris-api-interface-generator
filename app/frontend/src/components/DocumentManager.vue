@@ -15,8 +15,24 @@
         <option value="gpt-3.5-turbo">GPT-3.5-turbo</option>
         <option value="gpt-4o">GPT-4o</option>
         <option value="gpt-4o-mini">GPT-4o-mini</option>
+        <option value="phi3">Phi3</option>
       </select>
     </div>
+
+    <!-- Add section explaining a button that triggers an endpoint to download the phi3 model or check if it is downloaded.
+     the section needs a spot for the status of the mode
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2 text-gray-900">Phi3 Model</h2>
+      <p class="text-sm text-gray-600">The Phi3 model is a large model that requires additional setup. Click the button below to download the model.</p>
+      <button
+        @click="downloadPhi3Model"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      >
+        Download Phi3 Model
+      </button>
+      <p class="text-sm text-gray-600 mt-2" v-if="phi3Status">Status: {{ phi3Status }}</p>
+    </div>
+  -->
 
     <!-- embed_type either openai or bga-large-->
     <div class="mb-6">
@@ -211,6 +227,7 @@ export default {
       existing_document_names: [], 
       existing_documents: [],
       selectedDocuments: [],
+      phi3Status: null,
     };
   },
   methods: {
@@ -309,6 +326,23 @@ export default {
         }
       } catch (error) {
         console.error('Error deleting documents:', error);
+        alert('An unexpected error occurred.');
+      }
+    },
+    //download the phi3 model the endpoint is api/ollama_pull
+    async downloadPhi3Model() {
+      try {
+        const response = await fetch('/django/api/ollama_pull/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': VueCookies.get('csrftoken'),
+          },
+        });
+        const data = await response.json();
+        this.phi3Status = data.status;
+      } catch (error) {
+        console.error('Error downloading Phi3 model:', error);
         alert('An unexpected error occurred.');
       }
     },
