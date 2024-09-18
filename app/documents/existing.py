@@ -11,7 +11,6 @@ from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 
 from llama_index.core import Settings as LlamaSettings
@@ -45,12 +44,6 @@ def query_existing_document(name, query, top_k_similarity, similarity_threshold)
                 embed_type = doc.embed_type
                 if embed_type == "openai":
                     LlamaSettings.embed_model = OpenAIEmbedding(model="text-embedding-3-small", embed_batch_size=100)
-                elif embed_type == "bga-large":
-                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-large-en-v1.5")
-                elif embed_type == "bga-base":
-                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
-                elif embed_type == "bga-small":
-                    LlamaSettings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     except Exception as e:
         logger.error(f"Failed to get document: {e}")
         raise ValueError("Failed to get document.") from e

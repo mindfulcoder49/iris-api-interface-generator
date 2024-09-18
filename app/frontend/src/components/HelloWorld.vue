@@ -98,7 +98,7 @@
         <span class="font-semibold text-blue-600">Model Selection Dropdown</span>: Choose the AI model for processing your queries. This dropdown allows you to select from available models to tailor the query results to your needs.
       </li>
       <li class="mb-2">
-        <span class="font-semibold text-blue-600">Embed Type Dropdown</span>: Select the embedding type (e.g., OpenAI or BGA-Large) to influence how documents are represented in vector space.
+        <span class="font-semibold text-blue-600">Embed Type Dropdown</span>: Select the embedding type (e.g., OpenAI) to influence how documents are represented in vector space.
       </li>
       <li class="mb-2">
         <span class="font-semibold text-blue-600">Temperature Input</span>: Set the temperature parameter (range 0-2) to control the randomness of the AI's responses. Lower values make the output more deterministic.
@@ -159,34 +159,8 @@
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Embedding Options</h2>
     
     <p class="text-lg text-gray-700 mb-6">
-      When configuring the document management and querying features, you have the option to choose between local embeddings and API-based embeddings. Here’s a detailed comparison of the available embedding options:
+      When configuring the document management and querying features, you have the option to choose between API-based embeddings. Here’s a detailed comparison of the available embedding options:
     </p>
-
-    <div class="bg-gray-100 p-4 rounded-lg mb-6">
-      <h3 class="text-xl font-semibold text-gray-800 mb-2">Local Embeddings: AGA-Large</h3>
-      <p class="text-lg text-gray-700 mb-4">
-        <span class="font-semibold text-blue-600">bge-large</span> is an embedding model provided by <a href="https://huggingface.co/BAAI/bge-large-en-v1.5" class="text-blue-600 underline">BAAI</a> on Hugging Face. It offers a free and open-source solution for generating document embeddings locally.
-      </p>
-      <ul class="list-disc pl-5 mb-4">
-        <li class="mb-2">
-          <span class="font-semibold text-blue-600">Dimension</span>: 
-            <ul>
-              <li>BGA-Large - 1024</li>
-              <li>BGA-Base - 768</li>
-              <li>BGA-Small - 384</li>
-            </ul>
-        </li>
-        <li class="mb-2">
-          <span class="font-semibold text-blue-600">Cost</span>: Free to use
-        </li>
-        <li class="mb-2">
-          <span class="font-semibold text-blue-600">Accessibility</span>: Available for download and local deployment through Hugging Face
-        </li>
-        <li class="mb-2">
-          <span class="font-semibold text-blue-600">Integration</span>: Ideal for scenarios where local processing is preferred or when avoiding API costs
-        </li>
-      </ul>
-    </div>
 
     <div class="bg-gray-100 p-4 rounded-lg mb-6">
       <h3 class="text-xl font-semibold text-gray-800 mb-2">API-Based Embeddings: OpenAI</h3>

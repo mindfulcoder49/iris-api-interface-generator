@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Define the container service name as defined in your docker-compose.yml file (customize this if needed)
+SERVICE_NAME="iris"
+APP_ROOT="/irisdev/app/"
+
+case "$1" in
+  start-iris)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/start-iris.sh
+    ;;
+  
+  restart-iris)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/restart-iris.sh
+    ;;
+  
+  install-python-deps)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/install-python-deps.sh
+    ;;
+  
+  reload-production)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/reload-production.sh
+    ;;
+  
+  build-frontend)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/build-frontend.sh
+    ;;
+
+  django-build)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/django-build.sh
+    ;;
+  
+  django-manage)
+    shift # Remove first argument (django-manage)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/django-manage.sh "$@"
+    ;;
+  
+  build)
+    echo "Building the Docker container with docker-compose..."
+    docker-compose build $SERVICE_NAME
+    ;;
+  
+  rebuild)
+    echo "Rebuilding the Docker container with docker-compose..."
+    docker-compose down
+    docker-compose build --no-cache $SERVICE_NAME
+    ;;
+  
+  delete)
+    echo "Stopping and deleting the Docker container with docker-compose..."
+    docker-compose down
+    ;;
+  
+  start)
+    echo "Starting the Docker container with docker-compose..."
+    docker-compose up -d $SERVICE_NAME
+    ;;
+
+  restart)
+    echo "Restarting the Docker container with docker-compose..."
+    docker-compose restart $SERVICE_NAME
+    ;;
+  
+  *)
+    echo "Usage: $0 {start-iris|restart-iris|install-python-deps|reload-production|build-frontend|django-manage|build|rebuild|delete|start|restart}"
+    exit 1
+esac

@@ -12,7 +12,6 @@
         <option value="gpt-3.5-turbo">GPT-3.5-turbo</option>
         <option value="gpt-4o">GPT-4o</option>
         <option value="gpt-4o-mini">GPT-4o-mini</option>
-        <option value="phi3">Phi3</option>
       </select>
     </div>
     <div class="mb-6">
@@ -23,9 +22,6 @@
         class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
       >
         <option value="openai">OpenAI</option>
-        <option value="bga-small">BGA-Small (Fastest)</option>
-        <option value="bga-base">BGA-Base (Medium)</option>
-        <option value="bga-large">BGA-Large (Slow)</option>
       </select>
     </div>
     <div class="mb-6">
@@ -173,50 +169,67 @@ export default {
       query: '',
       document: '',
       document_name: '',
-      model_name: 'gpt-4o-mini',
-      embed_type: 'openai',
-      temperature: .5,
-      top_k_similarity: 3,
-      similarity_threshold: .4,
-      responses: {},
-      existing_document_names: [],
+      model_name: 'gpt-4o-mini', // Default model name
+      embed_type: 'openai', // Default embed_type
+      temperature: .5, // Default temperature
+      top_k_similarity: 3, // Default top_k_similarity
+      similarity_threshold: .4, // Default similarity_threshold
+      responses: {},  // Should be an object to store document names as keys
+      existing_document_names: [], 
       existing_documents: [],
       selectedDocuments: [],
-      phi3Status: null,
     };
   },
   methods: {
     async submitQuery() {
+      // Check for duplicate document names or content
       if (this.checkDocumentDuplicates()) {
+        //ask for confirmation
         if (!confirm('A document with the same name or content already exists. Are you sure you want to proceed?')) {
           return;
         }
       }
+      // Change the button text for element with id submitQuery to "Loading..."
       document.getElementById('submitQuery').innerText = 'Loading...';
+      //disable it
       document.getElementById('submitQuery').disabled = true;
-
       try {
-        const eventSource = new EventSource('/django/api/documents/');
-        eventSource.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          this.responses = { ...this.responses, ...data };
-        };
-        eventSource.onerror = (error) => {
-          console.error('Error receiving stream:', error);
-          eventSource.close();
-        };
-        eventSource.addEventListener('close', () => {
-          document.getElementById('submitQuery').innerText = 'Query';
-          document.getElementById('submitQuery').disabled = false;
-          eventSource.close();
+        const response = await fetch('/django/api/documents/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': VueCookies.get('csrftoken'),
+          },
+          body: JSON.stringify({
+            query_text: this.query,
+            document_text: this.document,
+            document_name: this.document_name,
+            model_name: this.model_name,
+            embed_type: this.embed_type,
+            temperature: this.temperature,
+            top_k_similarity: this.top_k_similarity,
+            similarity_threshold: this.similarity_threshold,
+            selected_documents: this.selectedDocuments || [],
+          }),
         });
-      } catch (error) {
+        const data = await response.json();
+            // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
         document.getElementById('submitQuery').innerText = 'Query';
+        //enable it
+        document.getElementById('submitQuery').disabled = false;
+        this.responses = data.responses;
+        this.existing_document_names = data.existing_document_names;
+        this.existing_documents = data.existing_documents;
+      } catch (error) {
+        // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
+        document.getElementById('submitQuery').innerText = 'Query';
+        //enable it
         document.getElementById('submitQuery').disabled = false;
         console.error('Error submitting query:', error);
         alert('An unexpected error occurred.');
       }
     },
+    
     async fetchExistingDocumentNames() {
       try {
         const response = await fetch('/django/api/document_names/', {
@@ -233,14 +246,17 @@ export default {
         console.error('Error fetching existing document names:', error);
       }
     },
+    
     async deleteDocuments() {
       if (this.selectedDocuments.length === 0) {
         alert('Please select documents to delete.');
         return;
       }
+      
       if (!confirm('Are you sure you want to delete the selected documents?')) {
         return;
       }
+      
       try {
         const response = await fetch('/django/api/documentsdelete/', {
           method: 'DELETE',
@@ -254,7 +270,7 @@ export default {
         if (response.ok) {
           alert('Documents deleted successfully.');
           this.selectedDocuments = [];
-          this.fetchExistingDocumentNames();
+          this.fetchExistingDocumentNames();  // Refresh the list of documents
         } else {
           alert('Error deleting documents: ' + data.error);
         }
@@ -263,22 +279,7 @@ export default {
         alert('An unexpected error occurred.');
       }
     },
-    async downloadPhi3Model() {
-      try {
-        const response = await fetch('/django/api/ollama_pull/', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': VueCookies.get('csrftoken'),
-          },
-        });
-        const data = await response.json();
-        this.phi3Status = data.status;
-      } catch (error) {
-        console.error('Error downloading Phi3 model:', error);
-        alert('An unexpected error occurred.');
-      }
-    },
+
     parseCitations(citations) {
       let splitCitations = citations.split('\n> Source ');
       let filteredCitations = splitCitations.filter(citation => citation.trim());
@@ -291,25 +292,33 @@ export default {
       });
       return mappedCitations;
     },
+
     parseResponse(response) {
+      //if response == "Empty Response" append "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query."
       if (response == "Empty Response") {
         return "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query.";
       } else {
         return response;
       }
     },
+
+    //check the existing_documents for an element with a name or content that matches the document_name or document
     checkDocumentDuplicates() {
       return this.existing_documents.some(doc => doc.name === this.document_name || doc.content === this.document);
     },
+
     clearQuery() {
       this.query = '';
     },
+
     clearDocumentName() {
       this.document_name = '';
     },
+
     clearDocument() {
       this.document = '';
     },
+
     clearAll() {
       this.query = '';
       this.document = '';

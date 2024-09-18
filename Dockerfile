@@ -32,9 +32,5 @@ RUN apt-get update && apt-get install -y \
 
 USER ${ISC_PACKAGE_MGRUSER}
 
-RUN pip3 install -r requirements.txt
-
-
-
 # change the entrypoint to run iris and the python script
 ENTRYPOINT [ "/irisdev/app/entrypoint.sh" ]

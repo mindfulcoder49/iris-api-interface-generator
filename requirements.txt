@@ -13,12 +13,12 @@ iris-pex-embedded-python>=2.0.0
 llama-index
 llama-iris
 
-llama_index.embeddings.huggingface
-llama_index.llms.ollama
+#llama_index.embeddings.huggingface
+#llama_index.llms.ollama
 
 #for ollama
 requests
-ollama
+#ollama
 
 #for connection to the database
 python-dotenv

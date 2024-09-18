@@ -1,53 +1,30 @@
 #!/bin/sh
 
-# start iris
-/iris-main "$@" &
+# Optionally install Python dependencies (uncomment if necessary)
+/irisdev/app/install-python-deps.sh
 
-# wait for iris to be ready
-/usr/irissys/dev/Cloud/ICM/waitISC.sh
+# Start IRIS and wait for it to be ready
+/irisdev/app/start-iris.sh
 
-# Obtain the IRIS super port and web port
-#IRIS_SUPER_PORT=$(iris list | grep 'IRIS has started' | awk '{print $9}')
-#IRIS_WEB_PORT=$(iris list | grep 'IRIS has started' | awk '{print $11}')
+# Reload the IRIS production
+/irisdev/app/reload-production.sh
 
-# Construct the connection string
-#export IRIS_CONNECTION_STRING="iris://${IRISUSERNAME}:${IRISPASSWORD}@localhost:${IRIS_SUPER_PORT}/${IRISNAMESPACE}"
+# Build the frontend
+/irisdev/app/build-frontend.sh
 
-# Print the connection string for verification
-#echo "IRIS_CONNECTION_STRING=${IRIS_CONNECTION_STRING}"
+# Run Django migrations and create the superuser
+/irisdev/app/django-manage.sh makemigrations
+/irisdev/app/django-manage.sh migrate
 
-# init iop
-iop --init
-
-# load production
-iop -m /irisdev/app/app/interop/settings.py
-
-# start production
-iop --start Python.Production --detach
-
-#run npm run build in the frontend
-cd /irisdev/app/app/frontend
-
-npm install
-
-npm run build
-
-# Move to the app directory
-cd /irisdev/app/app
-
-python3 manage.py makemigrations
-
-python3 manage.py flush --no-input
-python3 manage.py migrate
-# create superuser
+# Optionally create a Django superuser
 export DJANGO_SUPERUSER_PASSWORD=SYS
-python3 manage.py createsuperuser --no-input --username SuperUser --email admin@admin.fr
+/irisdev/app/django-manage.sh createsuperuser --no-input --username SuperUser --email admin@admin.fr
 
-# load demo data
-#python3 manage.py loaddata community/fixtures/demo.json
+# Collect static files
+/irisdev/app/django-manage.sh collectstatic --no-input --clear
 
-# collect static files
-python3 manage.py collectstatic --no-input --clear
+# Optionally restart IRIS (uncomment if necessary)
+# /irisdev/app/restart-iris.sh
 
-# open log in stdout
+# Keep the container running by tailing the IRIS log
 iop --log
