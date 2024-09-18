@@ -1,7 +1,3 @@
-# Update
-
-Local LLM suppor tin the form of phi3:mini has been added to show the possibility of a fully local environment
-
 # IRIS RAG
 
  Introduction
@@ -35,7 +31,6 @@ Local LLM suppor tin the form of phi3:mini has been added to show the possibilit
 - [Developer Tips](#developer-tips)
 
  Embedding Options
-- [Local Embeddings: AGA-Large](#local-embeddings-aga-large)
 - [API-Based Embeddings: OpenAI](#api-based-embeddings-openai)
 
  Attribution
@@ -169,15 +164,6 @@ Displays a list of all currently available documents for quick reference and sel
 
 When configuring the document management and querying features, you have the option to choose between local embeddings and API-based embeddings. Here’s a detailed comparison of the available embedding options:
 
-### Local Embeddings: AGA-Large
-
-**bge-large** is an embedding model provided by [BAAI](https://huggingface.co/BAAI/bge-large-en-v1.5) on Hugging Face. It offers a free and open-source solution for generating document embeddings locally.
-
-- **Dimension**: 1024
-- **Cost**: Free to use
-- **Accessibility**: Available for download and local deployment through Hugging Face
-- **Integration**: Ideal for scenarios where local processing is preferred or when avoiding API costs
-
 ### API-Based Embeddings: OpenAI
 
 OpenAI provides embeddings via its API, offering a powerful and scalable solution for generating high-quality document embeddings.
@@ -187,7 +173,7 @@ OpenAI provides embeddings via its API, offering a powerful and scalable solutio
 - **Accessibility**: Requires an API key and incurs costs based on usage
 - **Integration**: Suitable for applications needing high-quality embeddings with scalable cloud-based processing
 
-Local embeddings offer a cost-effective and flexible solution for offline processing, while API-based embeddings provide advanced capabilities and scalability for cloud-based applications.
+API-based embeddings provide advanced capabilities and scalability for cloud-based applications.
 
 ## Attribution
 
