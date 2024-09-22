@@ -1,8 +1,32 @@
-Sure! Here's the updated README that matches your new application, while keeping most of the setup the same. The functionality sections have been revised to reflect the new features of your API Documentation Query Tool.
+# Example Workflow for the API Documentation Query Tool
 
----
+Below is a step-by-step guide on how to use the API Documentation Query Tool. This example showcases a basic API query scenario, from pasting the API documentation to submitting a query and viewing the responses.
 
-# API Documentation Query Tool
+## Step 1: Paste the API Documentation
+
+In this step, the user copies the API documentation into the provided textarea. This documentation will be processed to generate a query form.
+
+![Step 1: Paste the API Documentation](misc/step1.png)
+
+## Step 2: Generate the Form
+
+After pasting the API documentation, the user clicks the "Generate Form" button. The tool processes the documentation and generates a form based on the parameters provided in the API documentation.
+
+![Step 2: Generate the Form](misc/step2.png)
+
+## Step 3: Submit the Query
+
+Once the form is generated, the user can fill in the required fields and click the "Submit Query" button to send the request to the API. The response from the API will be displayed below the form.
+
+![Step 3: Submit the Query](misc/step3.png)
+
+## Instructional Guide
+
+The application includes an instructional guide that provides detailed steps on how to use the API Documentation Query Tool. This guide can be toggled for visibility during the usage of the application.
+
+![Instructional Guide](misc/instructions.png)
+
+# IRIS API Interface Generator
 
 ## Introduction
 
