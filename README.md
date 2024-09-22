@@ -89,6 +89,7 @@ The application includes an instructional guide that provides detailed steps on 
 
 ![Instructional Guide](misc/instructions.png)
 
+# IRIS API Interface Generator
 
 ## What is the API Documentation Query Tool?
 
