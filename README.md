@@ -1,14 +1,14 @@
 
 ## Table of Contents
 
-1. [Example Workflow for the API Documentation Query Tool](#example-workflow-for-the-api-documentation-query-tool)
+1. [Example Workflow for the IRIS API Interface Generator](#example-workflow-for-the-api-documentation-query-tool)
    - Step 1: Paste the API Documentation
    - Step 2: Generate the Form
    - Step 3: Submit the Query
    - Instructional Guide
 2. [IRIS API Interface Generator](#iris-api-interface-generator)
    - Introduction
-     - [What is the API Documentation Query Tool?](#what-is-the-api-documentation-query-tool)
+     - [What is the IRIS API Interface Generator?](#what-is-the-api-documentation-query-tool)
      - [Key Features](#key-features)
    - [Quickstart](#quickstart)
      - [Setup and Configuration](#setup-and-configuration)
@@ -61,9 +61,9 @@
 4. [License](#license)
 
 
-# Example Workflow for the API Documentation Query Tool
+# Example Workflow for the IRIS API Interface Generator
 
-Below is a step-by-step guide on how to use the API Documentation Query Tool. This example showcases a basic API query scenario, from pasting the API documentation to submitting a query and viewing the responses.
+Below is a step-by-step guide on how to use the IRIS API Interface Generator. This example showcases a basic API query scenario, from pasting the API documentation to submitting a query and viewing the responses.
 
 ## Step 1: Paste the API Documentation
 
@@ -85,15 +85,15 @@ Once the form is generated, the user can fill in the required fields and click t
 
 ## Instructional Guide
 
-The application includes an instructional guide that provides detailed steps on how to use the API Documentation Query Tool. This guide can be toggled for visibility during the usage of the application.
+The application includes an instructional guide that provides detailed steps on how to use the IRIS API Interface Generator. This guide can be toggled for visibility during the usage of the application.
 
 ![Instructional Guide](misc/instructions.png)
 
 # IRIS API Interface Generator
 
-## What is the API Documentation Query Tool?
+## What is the IRIS API Interface Generator?
 
-The API Documentation Query Tool is a powerful application that allows users to interact with third-party APIs by generating dynamic forms based on the APIs' documentation. By simply pasting the API documentation into the tool, users can create custom query forms that enable them to send requests directly to the API and receive responses, all without manual coding.
+The IRIS API Interface Generator is a powerful application that allows users to interact with third-party APIs by generating dynamic forms based on the APIs' documentation. By simply pasting the API documentation into the tool, users can create custom query forms that enable them to send requests directly to the API and receive responses, all without manual coding.
 
 ## Key Features
 
