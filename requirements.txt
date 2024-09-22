@@ -9,16 +9,12 @@ django-iris>=0.2.5b4
 # iop - interoperability on python
 iris-pex-embedded-python>=2.0.0
 
-#for RAG
-llama-index
-llama-iris
-
 #llama_index.embeddings.huggingface
 #llama_index.llms.ollama
 
 #for ollama
 requests
-#ollama
+openai
 
 #for connection to the database
 python-dotenv

@@ -1,160 +1,136 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 py-6">
-    <h1 class="text-3xl font-extrabold mb-6 text-gray-900">Query and Manage Documents</h1>
-    <div class="mb-6">
-      <label for="model_name" class="block text-gray-700 text-sm font-bold mb-2">Model Name</label>
-      <select
-        id="model_name"
-        v-model="model_name"
-        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-      >
-        <option value="gpt-4">GPT-4</option>
-        <option value="gpt-3.5-turbo">GPT-3.5-turbo</option>
-        <option value="gpt-4o">GPT-4o</option>
-        <option value="gpt-4o-mini">GPT-4o-mini</option>
-      </select>
-    </div>
-    <div class="mb-6">
-      <label for="embed_type" class="block text-gray-700 text-sm font-bold mb-2">Embed Type</label>
-      <select
-        id="embed_type"
-        v-model="embed_type"
-        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-      >
-        <option value="openai">OpenAI</option>
-      </select>
-    </div>
-    <div class="mb-6">
-      <label for="temperature" class="block text-gray-700 text-sm font-bold mb-2">Temperature (0-2)</label>
-      <p class="text-sm text-gray-600">Controls the randomness of the generated text. Lower values are more deterministic, higher values are more random.</p>
-      <input
-        id="temperature"
-        type="number"
-        v-model.number="temperature"
-        min="0"
-        max="2"
-        step="0.1"
-        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-        placeholder="Enter temperature"
-      />
-    </div>
-    <div class="mb-6">
-      <label for="top_k_similarity" class="block text-gray-700 text-sm font-bold mb-2">Top_k_similarity (0-20)</label>
-      <p class="text-sm text-gray-600">Number of similar documents to retrieve</p>
-      <input
-        id="top_k_similarity"
-        type="number"
-        v-model.number="top_k_similarity"
-        min="0"
-        max="20"
-        step="1"
-        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-        placeholder="Enter top_k_similarity"
-      />
-    </div>
-    <div class="mb-6">
-      <label for="similarity_threshold" class="block text-gray-700 text-sm font-bold mb-2">Similarity Threshold (0-1)</label>
-      <p class="text-sm text-gray-600">Minimum similarity score for a document to be considered relevant</p>
-      <input
-        id="similarity_threshold"
-        type="number"
-        v-model.number="similarity_threshold"
-        min="0"
-        max="1"
-        step="0.1"
-        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-        placeholder="Enter similarity threshold"
-      />
-    </div>
+    <h1 class="text-3xl font-extrabold mb-6 text-gray-900">API Documentation Query</h1>
+
+    <!-- API Documentation Input -->
     <div class="mb-6 relative">
-      <label for="query" class="block text-gray-700 text-sm font-bold mb-2">Query</label>
+      <label for="api_documentation" class="block text-gray-700 text-sm font-bold mb-2">Paste API Documentation</label>
       <textarea
-        id="query"
-        v-model="query"
-        placeholder="Enter your query"
+        id="api_documentation"
+        v-model="apiDocumentation"
+        placeholder="Enter your API documentation"
         class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
         rows="6"
       ></textarea>
-      <button @click="clearQuery" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900">
+      <button @click="clearDocumentation" class="absolute right-2 top-8 text-gray-600 hover:text-gray-900">
         &#x2715;
       </button>
     </div>
-    <div class="mb-6 relative">
-      <label for="document_name" class="block text-gray-700 text-sm font-bold mb-2">Document Name</label>
-      <p class="text-sm text-gray-600">If blank then this and the document will be ignored</p>
-      <input
-        id="document_name"
-        v-model="document_name"
-        placeholder="Enter document name"
-        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-      />
-      <button @click="clearDocumentName" class="absolute right-2 bottom-2 text-gray-600 hover:text-gray-900">
-        &#x2715;
-      </button>
-    </div>
-    <div class="mb-6 relative">
-      <label for="document" class="block text-gray-700 text-sm font-bold mb-2">Document</label>
-      <p class="text-sm text-gray-600">If blank then this and the document name will be ignored</p>
-      <textarea
-        id="document"
-        v-model="document"
-        placeholder="Enter your document text"
-        class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-        rows="6"
-      ></textarea>
-      <button @click="clearDocument" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900">
-        &#x2715;
-      </button>
-    </div>
+
+    <!-- Submit API Documentation -->
     <div class="mb-6">
-      <label for="existing_documents" class="block text-gray-700 text-sm font-bold mb-2">Existing Documents</label>
-      <p class="text-sm text-gray-600">Select one or more documents to query against</p>
-      <p class="text-sm text-gray-600">Hold down the Ctrl (windows) / Command (Mac) button to select or unselect multiple options.</p>
-      <select
-        id="existing_documents"
-        v-model="selectedDocuments"
-        multiple
-        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
-      >
-        <option v-for="(doc, index) in existing_documents" :key="index" :value="doc.name">
-          {{ doc.name }} - {{ doc.embed_type }} - {{ doc.embed_dim }}
-        </option>
-      </select>
-    </div>
-    <div class="mb-6 flex space-x-4">
       <button
-        @click="submitQuery"
-        id="submitQuery"
-        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        @click="submitApiDocumentation"
+        :disabled="isGeneratingForm"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
-        Query/Add Document
-      </button>
-      <button
-        @click="clearAll"
-        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Clear All
-      </button>
-      <button
-        @click="deleteDocuments"
-        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Delete Selected Documents
+        {{ isGeneratingForm ? 'Generating Form...' : 'Generate Form' }}
       </button>
     </div>
-    <div v-if="responses" class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2 text-gray-900">Responses:</h2>
-      <div v-for="(response, document_name) in responses" :key="document_name" class="mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">{{ document_name }}</h3>
-        <p class="text-gray-700 mb-2">{{ parseResponse(response.response) }}</p>
-        <div v-if="response.citations" class="text-gray-600">
-          <h4 class="text-md font-semibold mb-1">Citations:</h4>
-          <div v-for="(citation, index) in parseCitations(response.citations)" :key="index" class="mb-2 p-2 border border-gray-200 rounded-lg">
-            <p>{{ citation }}</p>
+
+    <!-- Dynamic Form Generated from API -->
+    <div v-if="generatedFormFields.length > 0" class="mb-6">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-900">Generated Query Form</h2>
+
+      <!-- Dynamically Generated Inputs -->
+      <form @submit.prevent="submitQueryFromGeneratedForm">
+        <div v-for="(field, index) in generatedFormFields" :key="index" class="mb-6">
+          <label :for="field.name" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+
+          <!-- Text Input -->
+          <input
+            v-if="field.type === 'text'"
+            :id="field.name"
+            v-model="field.value"
+            type="text"
+            :placeholder="field.placeholder || ''"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+          />
+
+          <!-- Number Input -->
+          <input
+            v-else-if="field.type === 'number'"
+            :id="field.name"
+            v-model.number="field.value"
+            type="number"
+            :placeholder="field.placeholder || ''"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+          />
+
+          <!-- Select Input -->
+          <select
+            v-else-if="field.type === 'select'"
+            :id="field.name"
+            v-model="field.value"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+          >
+            <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+          </select>
+
+          <!-- Checkbox Input -->
+          <div v-else-if="field.type === 'checkbox'" class="flex items-center">
+            <input
+              :id="field.name"
+              v-model="field.value"
+              type="checkbox"
+              class="mr-2 leading-tight"
+            />
+            <span class="text-sm">{{ field.description }}</span>
           </div>
+
+          <!-- Textarea Input -->
+          <textarea
+            v-else-if="field.type === 'textarea'"
+            :id="field.name"
+            v-model="field.value"
+            :placeholder="field.placeholder || ''"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+            rows="4"
+          ></textarea>
+
+          <!-- Date Input -->
+          <input
+            v-else-if="field.type === 'date'"
+            :id="field.name"
+            v-model="field.value"
+            type="date"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+          />
+
+          <!-- Fallback for Unsupported Types -->
+          <input
+            v-else
+            :id="field.name"
+            v-model="field.value"
+            :type="field.type"
+            :placeholder="field.placeholder || ''"
+            class="block w-full bg-white border border-gray-400 px-4 py-2 rounded shadow-sm focus:outline-none focus:shadow-outline"
+          />
         </div>
-        <p v-if="response.error" class="text-red-600">{{ response.error }}</p>
-        <hr class="my-4 border-gray-300" />
+
+        <!-- Submit Query Directly to the Third-Party API -->
+        <div class="mb-6">
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Submit Query
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Display Responses and Option to Save -->
+    <div v-if="responses.length > 0" class="mb-6">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-900">Responses</h2>
+      <div v-for="(response, index) in responses" :key="index" class="mb-4 p-4 border border-gray-200 rounded-lg">
+        <p class="text-gray-700">{{ response }}</p>
+        <button
+          @click="saveResponse(index)"
+          class="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Save Response
+        </button>
       </div>
     </div>
   </div>
@@ -166,170 +142,116 @@ import VueCookies from 'vue-cookies';
 export default {
   data() {
     return {
-      query: '',
-      document: '',
-      document_name: '',
-      model_name: 'gpt-4o-mini', // Default model name
-      embed_type: 'openai', // Default embed_type
-      temperature: .5, // Default temperature
-      top_k_similarity: 3, // Default top_k_similarity
-      similarity_threshold: .4, // Default similarity_threshold
-      responses: {},  // Should be an object to store document names as keys
-      existing_document_names: [], 
-      existing_documents: [],
-      selectedDocuments: [],
+      apiDocumentation: '', // Holds the inputted API documentation
+      generatedFormFields: [], // Holds the generated form fields from the API
+      baseUrl: '', // Holds the base URL for the third-party API
+      responses: [], // Holds the responses after the query
+      isGeneratingForm: false, // Flag to indicate form generation in progress
     };
   },
   methods: {
-    async submitQuery() {
-      // Check for duplicate document names or content
-      if (this.checkDocumentDuplicates()) {
-        //ask for confirmation
-        if (!confirm('A document with the same name or content already exists. Are you sure you want to proceed?')) {
-          return;
-        }
-      }
-      // Change the button text for element with id submitQuery to "Loading..."
-      document.getElementById('submitQuery').innerText = 'Loading...';
-      //disable it
-      document.getElementById('submitQuery').disabled = true;
+    async submitApiDocumentation() {
+      // Send the API documentation to the backend to generate a form
       try {
-        const response = await fetch('/django/api/documents/', {
+        this.isGeneratingForm = true;
+        const response = await fetch('/django/api/query_openai/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': VueCookies.get('csrftoken'),
           },
           body: JSON.stringify({
-            query_text: this.query,
-            document_text: this.document,
-            document_name: this.document_name,
-            model_name: this.model_name,
-            embed_type: this.embed_type,
-            temperature: this.temperature,
-            top_k_similarity: this.top_k_similarity,
-            similarity_threshold: this.similarity_threshold,
-            selected_documents: this.selectedDocuments || [],
+            prompt: this.apiDocumentation,
           }),
         });
         const data = await response.json();
-            // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
-        document.getElementById('submitQuery').innerText = 'Query';
-        //enable it
-        document.getElementById('submitQuery').disabled = false;
-        this.responses = data.responses;
-        this.existing_document_names = data.existing_document_names;
-        this.existing_documents = data.existing_documents;
+        if (data.form_fields) {
+          // Initialize the value of each field if not provided
+          this.generatedFormFields = data.form_fields.map((field) => ({
+            ...field,
+            value: field.value || (field.type === 'checkbox' ? false : ''),
+          }));
+          // Set the base URL for the third-party API
+          this.baseUrl = data.base_url || '';
+        } else if (data.error) {
+          alert(`Error: ${data.error}`);
+        }
       } catch (error) {
-        // Change the button text for element with id submitQuery back to "Submit to GPT-4o-mini"
-        document.getElementById('submitQuery').innerText = 'Query';
-        //enable it
-        document.getElementById('submitQuery').disabled = false;
-        console.error('Error submitting query:', error);
-        alert('An unexpected error occurred.');
+        console.error('Error generating form:', error);
+        alert('An unexpected error occurred while generating the form.');
+      } finally {
+        this.isGeneratingForm = false;
       }
     },
-    
-    async fetchExistingDocumentNames() {
+
+    async submitQueryFromGeneratedForm() {
+      // Send the filled form data to your backend
+      const formData = this.generatedFormFields.reduce((acc, field) => {
+        acc[field.name] = field.value;
+        return acc;
+      }, {});
+
       try {
-        const response = await fetch('/django/api/document_names/', {
-          method: 'GET',
+        if (!this.baseUrl) {
+          alert('Base URL for the third-party API is not available.');
+          return;
+        }
+
+        const response = await fetch('/django/api/submit_query/', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': VueCookies.get('csrftoken'),
           },
+          body: JSON.stringify({
+            base_url: this.baseUrl,
+            form_data: formData,
+          }),
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
-        this.existing_document_names = data.existing_document_names;
-        this.existing_documents = data.existing_documents;
+
+        // Handle the data as needed
+        this.responses.push(JSON.stringify(data, null, 2));
       } catch (error) {
-        console.error('Error fetching existing document names:', error);
+        console.error('Error querying API:', error);
+        alert('An unexpected error occurred while querying the API.');
       }
     },
-    
-    async deleteDocuments() {
-      if (this.selectedDocuments.length === 0) {
-        alert('Please select documents to delete.');
-        return;
-      }
-      
-      if (!confirm('Are you sure you want to delete the selected documents?')) {
-        return;
-      }
-      
+
+
+
+    async saveResponse(index) {
       try {
-        const response = await fetch('/django/api/documentsdelete/', {
-          method: 'DELETE',
+        const response = await fetch('/django/api/save/', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': VueCookies.get('csrftoken'),
           },
-          body: JSON.stringify({ document_names: this.selectedDocuments }),
+          body: JSON.stringify({
+            response: this.responses[index],
+          }),
         });
-        const data = await response.json();
         if (response.ok) {
-          alert('Documents deleted successfully.');
-          this.selectedDocuments = [];
-          this.fetchExistingDocumentNames();  // Refresh the list of documents
+          alert('Response saved successfully.');
         } else {
-          alert('Error deleting documents: ' + data.error);
+          alert('Failed to save response.');
         }
       } catch (error) {
-        console.error('Error deleting documents:', error);
-        alert('An unexpected error occurred.');
+        console.error('Error saving response:', error);
+        alert('An unexpected error occurred while saving the response.');
       }
     },
 
-    parseCitations(citations) {
-      let splitCitations = citations.split('\n> Source ');
-      let filteredCitations = splitCitations.filter(citation => citation.trim());
-      let mappedCitations = filteredCitations.map((citation, index) => {
-        if (index === 0) {
-          return citation.trim();
-        } else {
-          return '> Source ' + citation.trim();
-        }
-      });
-      return mappedCitations;
+    clearDocumentation() {
+      this.apiDocumentation = '';
     },
-
-    parseResponse(response) {
-      //if response == "Empty Response" append "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query."
-      if (response == "Empty Response") {
-        return "No matching documents above the similarity threshold found. Lower the similarity threshold or try a different query.";
-      } else {
-        return response;
-      }
-    },
-
-    //check the existing_documents for an element with a name or content that matches the document_name or document
-    checkDocumentDuplicates() {
-      return this.existing_documents.some(doc => doc.name === this.document_name || doc.content === this.document);
-    },
-
-    clearQuery() {
-      this.query = '';
-    },
-
-    clearDocumentName() {
-      this.document_name = '';
-    },
-
-    clearDocument() {
-      this.document = '';
-    },
-
-    clearAll() {
-      this.query = '';
-      this.document = '';
-      this.document_name = '';
-      this.selectedDocuments = [];
-      this.responses = {};
-    }
   },
-  created() {
-    this.fetchExistingDocumentNames();
-  }
 };
 </script>
 

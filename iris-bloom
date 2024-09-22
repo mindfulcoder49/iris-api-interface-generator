@@ -25,6 +25,10 @@ case "$1" in
     docker-compose exec $SERVICE_NAME $APP_ROOT/build-frontend.sh
     ;;
 
+  reinstall-frontend)
+    docker-compose exec $SERVICE_NAME $APP_ROOT/reinstall-frontend.sh
+    ;;
+
   django-build)
     docker-compose exec $SERVICE_NAME $APP_ROOT/django-build.sh
     ;;
@@ -53,6 +57,11 @@ case "$1" in
   start)
     echo "Starting the Docker container with docker-compose..."
     docker-compose up -d $SERVICE_NAME
+    ;;
+
+  stop)
+    echo "Stopping the Docker container with docker-compose..."
+    docker-compose stop $SERVICE_NAME
     ;;
 
   restart)
