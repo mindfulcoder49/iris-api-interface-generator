@@ -19,7 +19,7 @@ class APIQueryViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def save_query(request):
     if request.method == 'POST':
-        serializer = APIQuerySerializer(data=request.data)
+        serializer = APIQuerySerializer(data=request.data.get('response'))
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'Query saved successfully!'})
@@ -102,7 +102,7 @@ def query_openai(request):
         client = OpenAI()
         # Call OpenAI ChatCompletion API with function calling
         response = client.chat.completions.create(
-            model="gpt-4o",  # or "gpt-4-0613" if available
+            model="gpt-4o-mini",  # or "gpt-4-0613" if available
             messages=messages,
             tools=functions,
         )

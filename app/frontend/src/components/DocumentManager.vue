@@ -124,13 +124,15 @@
     <div v-if="responses.length > 0" class="mb-6">
       <h2 class="text-2xl font-semibold mb-4 text-gray-900">Responses</h2>
       <div v-for="(response, index) in responses" :key="index" class="mb-4 p-4 border border-gray-200 rounded-lg">
-        <p class="text-gray-700">{{ response }}</p>
+        <JsonTree :json="JSON.parse(response)" />
+        <!--
         <button
           @click="saveResponse(index)"
           class="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Save Response
         </button>
+      -->
       </div>
     </div>
   </div>
@@ -138,8 +140,12 @@
 
 <script>
 import VueCookies from 'vue-cookies';
+import JsonTree from './JsonTree.vue';
 
 export default {
+  components: {
+    JsonTree,
+  },
   data() {
     return {
       apiDocumentation: '', // Holds the inputted API documentation
@@ -227,7 +233,7 @@ export default {
 
     async saveResponse(index) {
       try {
-        const response = await fetch('/django/api/save/', {
+        const response = await fetch('/django/save/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
