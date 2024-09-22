@@ -1,6 +1,8 @@
+# views.py
+
 from rest_framework import viewsets
-from .models import APIQuery
-from .serializers import APIQuerySerializer
+from .models import APIQuery, APIQueryTemplate
+from .serializers import APIQuerySerializer, APIQueryTemplateSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import openai
@@ -9,22 +11,55 @@ import json
 from django.conf import settings
 import requests
 
-
-
-
 class APIQueryViewSet(viewsets.ModelViewSet):
     queryset = APIQuery.objects.all().order_by('-created_at')
     serializer_class = APIQuerySerializer
 
+class APIQueryTemplateViewSet(viewsets.ModelViewSet):
+    queryset = APIQueryTemplate.objects.all().order_by('-created_at')
+    serializer_class = APIQueryTemplateSerializer
+
+@api_view(['GET'])
+def get_templates(request):
+    templates = APIQueryTemplate.objects.all()
+    serializer = APIQueryTemplateSerializer(templates, many=True)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def save_query(request):
-    if request.method == 'POST':
-        serializer = APIQuerySerializer(data=request.data.get('response'))
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Query saved successfully!'})
-        return Response(serializer.errors, status=400)
-    
+    # Extract data from the request
+    response_text = request.data.get('response')
+    query_text = request.data.get('query', '')  # Default to empty string if not provided
+
+    if not response_text:
+        return Response({'error': 'No response data provided.'}, status=400)
+
+    # Create a new APIQuery instance
+    api_query = APIQuery(query=query_text, response=response_text)
+    api_query.save()
+
+    return Response({'message': 'Query saved successfully!'})
+
+@api_view(['POST'])
+def save_template(request):
+    form_fields = request.data.get('form_fields')
+    base_url = request.data.get('base_url')
+
+    if not form_fields or not base_url:
+        return Response({'error': 'Missing form_fields or base_url'}, status=400)
+
+    # Convert form_fields to JSON if it's a string
+    if isinstance(form_fields, str):
+        try:
+            form_fields = json.loads(form_fields)
+        except json.JSONDecodeError:
+            return Response({'error': 'Invalid JSON in form_fields'}, status=400)
+
+    # Create a new APIQueryTemplate instance
+    api_query_template = APIQueryTemplate(form_fields=form_fields, base_url=base_url)
+    api_query_template.save()
+
+    return Response({'message': 'Template saved successfully!'})
 
 @api_view(['POST'])
 def query_openai(request):
@@ -127,7 +162,6 @@ def query_openai(request):
             return Response({"error": "No function call was made by the assistant."}, status=500)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-    
 
 @api_view(['POST'])
 def submit_query(request):
