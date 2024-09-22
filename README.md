@@ -69,6 +69,8 @@ The application includes an instructional guide that provides detailed steps on 
   - [Methods](#methods)
 - [Styles](#styles)
 
+## iris-bloom
+
 ## License
 
 - [License](#license)
@@ -118,7 +120,7 @@ The API Documentation Query Tool is a powerful application that allows users to 
    - To allow the Docker container's internal users to write to the repository directory, set full permissions.
 
      ```bash
-     chmod -R 777 .
+     chmod -R 777 ..
      ```
 
 5. **Run `docker-compose up`:**
@@ -288,6 +290,154 @@ The user interface includes:
 ## Styles
 
 - **Tailwind CSS**: Utilized for styling the application, ensuring a modern and responsive user interface.
+
+---
+
+Here's a `README.md` section for your `iris-bloom` script:
+
+
+## Iris-Bloom: Docker Workflow Script
+
+`iris-bloom` is a lightweight command-line tool inspired by Laravel Sail, designed to simplify the development process when working with Django, Vue, and IRIS within Docker. It automates common Docker commands and integrates them with your Django, Vue.js, and IRIS environment for easier management.
+
+### Prerequisites
+
+- Ensure `docker-compose` is installed and properly configured in your environment.
+- Define your services in the `docker-compose.yml` file (ensure the service name aligns with the `SERVICE_NAME` in the script).
+
+### Usage
+
+The following commands can be used to manage your Docker environment efficiently:
+
+#### Start IRIS
+
+```bash
+./iris-bloom start-iris
+```
+Starts the IRIS service within the Docker container by executing the `start-iris.sh` script inside the container.
+
+#### Restart IRIS
+
+```bash
+./iris-bloom restart-iris
+```
+Restarts the IRIS service using the `restart-iris.sh` script.
+
+#### Install Python Dependencies
+
+```bash
+./iris-bloom install-python-deps
+```
+Installs Python dependencies inside the container by executing the `install-python-deps.sh` script.
+
+#### Reload Production
+
+```bash
+./iris-bloom reload-production
+```
+Reloads the production environment by running the `reload-production.sh` script.
+
+#### Build Frontend
+
+```bash
+./iris-bloom build-frontend
+```
+Builds the frontend (Vue.js) using the `build-frontend.sh` script.
+
+#### Reinstall Frontend
+
+```bash
+./iris-bloom reinstall-frontend
+```
+Reinstalls the frontend dependencies and rebuilds the project.
+
+#### Django Build
+
+```bash
+./iris-bloom django-build
+```
+Builds the Django application using the `django-build.sh` script.
+
+#### Django Manage
+
+```bash
+./iris-bloom django-manage <command>
+```
+Executes Django management commands inside the container (e.g., `./iris-bloom django-manage migrate`).
+
+#### Build Container
+
+```bash
+./iris-bloom build
+```
+Builds the Docker container using `docker-compose build`.
+
+#### Rebuild Container (No Cache)
+
+```bash
+./iris-bloom rebuild
+```
+Rebuilds the Docker container from scratch, bypassing the cache.
+
+#### Start the Container
+
+```bash
+./iris-bloom start
+```
+Starts the container in detached mode using `docker-compose up`.
+
+#### Stop the Container
+
+```bash
+./iris-bloom stop
+```
+Stops the running container.
+
+#### Restart the Container
+
+```bash
+./iris-bloom restart
+```
+Restarts the container.
+
+#### Delete the Container
+
+```bash
+./iris-bloom delete
+```
+Stops and removes the container.
+
+### Customization
+
+You can modify the `SERVICE_NAME` and `APP_ROOT` in the script to suit your Docker Compose setup and the location of your application scripts.
+
+### Example Workflow
+
+```bash
+# Step 1: Build the container
+./iris-bloom build
+
+# Step 2: Start the container
+./iris-bloom start
+
+# Step 3: Install Python dependencies
+./iris-bloom install-python-deps
+
+# Step 4: Build the frontend
+./iris-bloom build-frontend
+
+# Step 5: Run Django management commands
+./iris-bloom django-manage migrate
+```
+
+### Troubleshooting
+
+- If your services are not responding, ensure the container is running by executing `docker-compose ps`.
+- Check if the service names in your `docker-compose.yml` match the `SERVICE_NAME` variable in the script.
+
+---
+
+The `iris-bloom` script is designed to streamline development tasks, allowing you to focus on coding rather than manual container management.
 
 ---
 
