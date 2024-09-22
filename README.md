@@ -1,3 +1,66 @@
+
+## Table of Contents
+
+1. [Example Workflow for the API Documentation Query Tool](#example-workflow-for-the-api-documentation-query-tool)
+   - Step 1: Paste the API Documentation
+   - Step 2: Generate the Form
+   - Step 3: Submit the Query
+   - Instructional Guide
+2. [IRIS API Interface Generator](#iris-api-interface-generator)
+   - Introduction
+     - [What is the API Documentation Query Tool?](#what-is-the-api-documentation-query-tool)
+     - [Key Features](#key-features)
+   - [Quickstart](#quickstart)
+     - [Setup and Configuration](#setup-and-configuration)
+     - [Usage](#usage)
+   - [Application Overview](#application-overview)
+     - [Functionality](#functionality)
+     - [Interface Overview](#interface-overview)
+     - [Using the Interface](#using-the-interface)
+       - [Paste API Documentation](#paste-api-documentation)
+       - [Generate Form Button](#generate-form-button)
+       - [Generated Query Form](#generated-query-form)
+       - [Submit Query Button](#submit-query-button)
+       - [Responses and Save Option](#responses-and-save-option)
+     - [Developer Tips](#developer-tips)
+   - [Backend](#backend)
+     - [Views](#views)
+       - [`query_openai(request)`](#query_openairequest)
+       - [`submit_query(request)`](#submit_queryrequest)
+       - [`save_query(request)`](#save_queryrequest)
+     - [Dependencies](#dependencies)
+   - [Frontend](#frontend)
+     - [Components](#components)
+       - [Features](#features)
+     - [Interface](#interface)
+       - [Main Sections](#main-sections)
+     - [Script](#script)
+       - [Data](#data)
+       - [Methods](#methods)
+   - [Styles](#styles)
+3. [Iris-Bloom: Docker Workflow Script](#iris-bloom-docker-workflow-script)
+   - [Prerequisites](#prerequisites)
+   - [Usage](#usage)
+     - [Start IRIS](#start-iris)
+     - [Restart IRIS](#restart-iris)
+     - [Install Python Dependencies](#install-python-dependencies)
+     - [Reload Production](#reload-production)
+     - [Build Frontend](#build-frontend)
+     - [Reinstall Frontend](#reinstall-frontend)
+     - [Django Build](#django-build)
+     - [Django Manage](#django-manage)
+     - [Build Container](#build-container)
+     - [Rebuild Container (No Cache)](#rebuild-container-no-cache)
+     - [Start the Container](#start-the-container)
+     - [Stop the Container](#stop-the-container)
+     - [Restart the Container](#restart-the-container)
+     - [Delete the Container](#delete-the-container)
+   - [Customization](#customization)
+   - [Example Workflow](#example-workflow)
+   - [Troubleshooting](#troubleshooting)
+4. [License](#license)
+
+
 # Example Workflow for the API Documentation Query Tool
 
 Below is a step-by-step guide on how to use the API Documentation Query Tool. This example showcases a basic API query scenario, from pasting the API documentation to submitting a query and viewing the responses.
@@ -26,56 +89,6 @@ The application includes an instructional guide that provides detailed steps on 
 
 ![Instructional Guide](misc/instructions.png)
 
-# IRIS API Interface Generator
-
-## Introduction
-
-- [What is the API Documentation Query Tool?](#what-is-the-api-documentation-query-tool)
-- [Key Features](#key-features)
-
-## Quickstart
-
-- [Setup and Configuration](#setup-and-configuration)
-- [Usage](#usage)
-
-## Application Overview
-
-- [Functionality](#functionality)
-- [Interface Overview](#interface-overview)
-- [Using the Interface](#using-the-interface)
-  - [Paste API Documentation](#paste-api-documentation)
-  - [Generate Form Button](#generate-form-button)
-  - [Generated Query Form](#generated-query-form)
-  - [Submit Query Button](#submit-query-button)
-  - [Responses and Save Option](#responses-and-save-option)
-- [Developer Tips](#developer-tips)
-
-## Backend
-
-- [Views](#views)
-  - [`query_openai(request)`](#query_openairequest)
-  - [`submit_query(request)`](#submit_queryrequest)
-  - [`save_query(request)`](#save_queryrequest)
-- [Dependencies](#dependencies)
-
-## Frontend
-
-- [Components](#components)
-  - [Features](#features)
-- [Interface](#interface)
-  - [Main Sections](#main-sections)
-- [Script](#script)
-  - [Data](#data)
-  - [Methods](#methods)
-- [Styles](#styles)
-
-## iris-bloom
-
-## License
-
-- [License](#license)
-
----
 
 ## What is the API Documentation Query Tool?
 
