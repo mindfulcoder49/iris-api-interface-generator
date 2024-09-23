@@ -460,5 +460,3 @@ The `iris-bloom` script is designed to streamline development tasks, allowing yo
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-Feel free to customize any section further to better fit your application's specifics or to add more details where necessary.
