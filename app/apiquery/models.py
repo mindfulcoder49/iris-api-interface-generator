@@ -12,7 +12,7 @@ class APIQuery(models.Model):
         return f"Query made on {self.created_at}"
 
 class APIQueryTemplate(models.Model):
-    form_fields = models.JSONField()  # Changed to JSONField for better handling
+    form_fields = models.TextField()  
     base_url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
 

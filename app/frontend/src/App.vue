@@ -1,19 +1,19 @@
 <template>
   <div id="app">
     <hello-world ></hello-world>
-    <document-manager></document-manager>
+    <app-manager></app-manager>
   </div>
 </template>
 
 <script>
 import HelloWorld from '@/components/HelloWorld.vue';
-import DocumentManager from '@/components/DocumentManager.vue';
+import AppManager from '@/components/AppManager.vue';
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
-    DocumentManager,
+    AppManager,
   },
   data() {
     return {

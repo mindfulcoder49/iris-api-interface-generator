@@ -23,7 +23,18 @@ class APIQueryTemplateViewSet(viewsets.ModelViewSet):
 def get_templates(request):
     templates = APIQueryTemplate.objects.all()
     serializer = APIQueryTemplateSerializer(templates, many=True)
-    return Response(serializer.data)
+    
+    # Modify the serialized data to parse the form_fields string
+    modified_data = serializer.data
+    for template in modified_data:
+        form_fields_str = template.get('form_fields', '[]')
+        try:
+            template['form_fields'] = json.loads(form_fields_str)
+        except json.JSONDecodeError:
+            template['form_fields'] = []  # Default to empty list if there's a JSON parsing error
+    
+    return Response(modified_data)
+
 
 @api_view(['POST'])
 def save_query(request):
@@ -55,11 +66,15 @@ def save_template(request):
         except json.JSONDecodeError:
             return Response({'error': 'Invalid JSON in form_fields'}, status=400)
 
+    # Ensure form_fields is stored as a JSON string with double quotes
+    form_fields_str = json.dumps(form_fields)  # Convert the JSON object back to a string
+
     # Create a new APIQueryTemplate instance
-    api_query_template = APIQueryTemplate(form_fields=form_fields, base_url=base_url)
+    api_query_template = APIQueryTemplate(form_fields=form_fields_str, base_url=base_url)
     api_query_template.save()
 
     return Response({'message': 'Template saved successfully!'})
+
 
 @api_view(['POST'])
 def query_openai(request):
