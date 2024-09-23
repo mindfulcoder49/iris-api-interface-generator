@@ -112,8 +112,8 @@ The IRIS API Interface Generator is a powerful application that allows users to 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/yourrepository.git
-   cd yourrepository
+   git clone https://github.com/mindfulcoder49/iris-api-interface-generator
+   cd iris-api-interface-generator
    ```
 
 2. **Create a `.env` File:**
