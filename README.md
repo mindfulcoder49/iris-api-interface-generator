@@ -145,7 +145,7 @@ The IRIS API Interface Generator is a powerful application that allows users to 
 
 1. **Access the Application:**
 
-   - Frontend: `http://localhost:53795/`
+   - Frontend: `http://localhost:53795/django`
 
 ---
 
