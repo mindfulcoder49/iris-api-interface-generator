@@ -178,6 +178,10 @@ def query_openai(request):
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
+import requests
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 @api_view(['POST'])
 def submit_query(request):
     try:
@@ -187,11 +191,16 @@ def submit_query(request):
         if not base_url or not form_data:
             return Response({'error': 'Missing base_url or form_data'}, status=400)
 
-        # Make the API request from the server
-        response = requests.get(base_url, params=form_data)
+        # Try making the GET request first
+        try:
+            response = requests.get(base_url, params=form_data)
+            response.raise_for_status()  # Check for HTTP errors
 
-        # Check for HTTP errors
-        response.raise_for_status()
+        except requests.exceptions.RequestException:
+            # If GET request fails, try a POST request
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post(base_url, json=form_data, headers=headers)
+            response.raise_for_status()  # Check for HTTP errors
 
         # Return the response data to the frontend
         return Response(response.json())
@@ -200,3 +209,4 @@ def submit_query(request):
         return Response({'error': f'HTTP error occurred: {http_err}'}, status=response.status_code)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
